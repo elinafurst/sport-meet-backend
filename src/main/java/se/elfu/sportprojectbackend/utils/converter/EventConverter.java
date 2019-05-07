@@ -4,7 +4,9 @@ import org.springframework.data.domain.Page;
 import se.elfu.sportprojectbackend.controller.model.*;
 import se.elfu.sportprojectbackend.repository.model.*;
 import se.elfu.sportprojectbackend.utils.DateTimeParser;
+import se.elfu.sportprojectbackend.utils.HttpHeadersMapper;
 import se.elfu.sportprojectbackend.utils.KeyValueMapper;
+import se.elfu.sportprojectbackend.utils.Validator;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -29,7 +31,21 @@ public final class EventConverter {
                 .build();
     }
 
-    public static EventDto createFrom(Event entity) {
+    public static Event updateFrom (Event event, EventCreationDto dto, Sport sport, User user, Unit unit, LocalDateTime eventStart, Location location) {
+        return event.toBuilder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .sport(sport)
+                .eventStart(eventStart)
+                .maxParticipants(dto.getMaxParticipants())
+                .createdBy(user)
+                .byUnit(unit)
+                .meetingPoint(dto.getMeetingPoint())
+                .location(location)
+                .build();
+    }
+
+    public static EventDto createFrom(Event entity, RequestStatus requestStatus, User user) {
         return EventDto.builder()
                 .eventNumber(entity.getEventNumber())
                 .name(entity.getName())
@@ -46,6 +62,8 @@ public final class EventConverter {
                 .city(entity.getLocation().getCity())
                 .area(entity.getLocation().getArea().getArea())
                 .meetingPoint(entity.getMeetingPoint())
+                .requestStatus(requestStatus)
+                .isCreator(Validator.isSameUser(entity.getCreatedBy().getId(), user.getId()))
                 .build();
     }
 
@@ -66,7 +84,17 @@ public final class EventConverter {
                 .build();
     }
 
-    public static List<EventDto> createFromEntities(Page<Event> entities){
+    public static PageDto convertToPageDto(Page<Event> entities){
+        Validator.isEmpty(entities.getSize());
+
+        return PageDto.builder()
+                .totalElements(entities.getTotalElements())
+                .totalPages(entities.getTotalPages() -1)
+                .dtos(createFromEntities(entities))
+                .build();
+    }
+
+    private static List<Object> createFromEntities(Page<Event> entities){
         return entities.stream()
                 .map(EventConverter::createFromList)
                 .collect(Collectors.toList());

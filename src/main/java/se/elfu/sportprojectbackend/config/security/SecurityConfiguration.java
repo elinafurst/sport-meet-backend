@@ -3,11 +3,15 @@ package se.elfu.sportprojectbackend.config.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -42,14 +46,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("account/signup").permitAll()
-                .antMatchers("oauth/token").permitAll()
-                .antMatchers("events").permitAll() //TODO implicit flow(?)
-                .antMatchers("spring-security-rest/api/v2/api-docs").permitAll() //TODO
-                .antMatchers("/*").hasRole("ADMIN")
+                    .antMatchers("/account/signup", "/oauth/token","oauth/authorization", "/swagger-ui.html" ).permitAll()
+                .antMatchers( HttpMethod.GET,"/open/events/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin();
+
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("events");
     }
 
     @Bean

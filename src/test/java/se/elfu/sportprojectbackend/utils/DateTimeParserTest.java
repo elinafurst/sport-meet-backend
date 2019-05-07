@@ -5,6 +5,8 @@ import se.elfu.sportprojectbackend.exception.customException.BadRequestException
 import static org.junit.Assert.*;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class DateTimeParserTest {
 
@@ -52,5 +54,19 @@ public class DateTimeParserTest {
         String actual = DateTimeParser.formatTime(localDateTime);
 
         assertTrue(actual.equals(expected));
+    }
+
+    @Test
+    public void test(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy", Locale.forLanguageTag("sv"));
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm", Locale.forLanguageTag("sv"));
+
+        String date = LocalDateTime.now().format(formatter);
+        date = date.substring(0,1).toUpperCase() + date.substring(1);
+
+        String time = LocalDateTime.now().format(formatter2);
+
+
+        System.out.println(date + " kl. " + time);
     }
 }

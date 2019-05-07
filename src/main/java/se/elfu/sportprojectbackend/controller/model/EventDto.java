@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import se.elfu.sportprojectbackend.repository.model.RequestStatus;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class EventDto {
     private String city;
     private String area;
     private String meetingPoint;
+    private RequestStatus requestStatus;
+    private boolean isCreator;
     private List<CommentDto> comments;
 
 }

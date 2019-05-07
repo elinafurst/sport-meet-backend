@@ -42,7 +42,7 @@ public class Event {
         this.participants.add(user);
     }
 
-    public void removeParticipant(User user) {
-        this.participants.remove(user);
+    public boolean removeParticipant(User user) {
+        return this.participants.remove(user);
     }
 }

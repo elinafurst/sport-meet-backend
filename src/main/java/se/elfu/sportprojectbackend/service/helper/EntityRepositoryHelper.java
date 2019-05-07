@@ -25,8 +25,9 @@ public class EntityRepositoryHelper {
     private final AccountRepository accountRepository;
     private final CommentRepository commentRepository;
     private final LocationRepository locationRepository;
+    private final RequestRepository requestRepository;
 
-    public EntityRepositoryHelper(EventRepository eventRepository, SportRepository sportRepository, UnitRepository unitRepository, UserRepository userRepository, AuthorityRepository authorityRepository, AccountRepository accountRepository, CommentRepository commentRepository, LocationRepository locationRepository) {
+    public EntityRepositoryHelper(EventRepository eventRepository, SportRepository sportRepository, UnitRepository unitRepository, UserRepository userRepository, AuthorityRepository authorityRepository, AccountRepository accountRepository, CommentRepository commentRepository, LocationRepository locationRepository, RequestRepository requestRepository) {
         this.eventRepository = eventRepository;
         this.authorityRepository = authorityRepository;
         this.sportRepository = sportRepository;
@@ -35,12 +36,13 @@ public class EntityRepositoryHelper {
         this.accountRepository = accountRepository;
         this.commentRepository = commentRepository;
         this.locationRepository = locationRepository;
+        this.requestRepository = requestRepository;
     }
 
     public String getCurrentEmail(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth == null){
-            throw new RuntimeException("Can't make request, invalid token"); //TODO exception
+            throw new RuntimeException("Can't make request, invalid token"); //TODO change exception type
         }
         String email = auth.getName().toLowerCase();
         log.info("Active user is: {}", email);
@@ -88,5 +90,15 @@ public class EntityRepositoryHelper {
     public Comment getComment(UUID commentNumber) {
         return commentRepository.findByCommentNumber(commentNumber)
                 .orElseThrow(() -> new NotFoundException("Comment", commentNumber.toString()));
+    }
+
+    public Location getLocation(String city, String area) {
+        return locationRepository.findByCityAndAreaArea(city, area)
+                .orElseThrow(() -> new NotFoundException("City", city));
+    }
+
+    public Request getRequest(UUID requestNumber) {
+       return requestRepository.findByRequestNumber(requestNumber)
+                .orElseThrow(() -> new NotFoundException("Request", requestNumber.toString()));
     }
 }

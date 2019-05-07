@@ -6,14 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UnitCreationDto {
+public class LocationDto {
 
-    @NotBlank(message = "Namn saknas")
-    private String name;
-    private String description;
+    @NotBlank(message = "Stad saknas")
+    private String city;
+    private Set<@NotBlank(message = "Områden saknas") String> areas;
 }

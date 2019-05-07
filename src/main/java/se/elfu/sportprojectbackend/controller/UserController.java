@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import se.elfu.sportprojectbackend.controller.model.UserDto;
 import se.elfu.sportprojectbackend.service.UserService;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -21,7 +22,7 @@ public class UserController {
     }
 
     @PutMapping("active")
-    public ResponseEntity updateUser(@RequestBody UserDto userDto){
+    public ResponseEntity updateUser(@Valid @RequestBody UserDto userDto){
         log.info("PUT update active user: {}", userDto);
         userService.updateUser(userDto);
         return ResponseEntity.noContent().build();
@@ -37,18 +38,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getGroupsForActiveUser());
     }
 
-
-    @PutMapping("active/units/{unitNumber}")
-    public ResponseEntity joinGroup(@PathVariable("unitNumber") UUID unitNumber) {
-        userService.joinGroup(unitNumber);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("active/units/{unitNumber}")
-    public ResponseEntity leaveGroup(@PathVariable("unitNumber") UUID unitNumber) {
-        userService.leaveGroup(unitNumber);
-        return ResponseEntity.noContent().build();
-    }
 
     @GetMapping("active")
     public ResponseEntity getActiveUser() {

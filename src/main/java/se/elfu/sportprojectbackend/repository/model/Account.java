@@ -19,6 +19,6 @@ public class Account {
     private Long id;
     private String email;
     private String password;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL) //TODO inte fetchtyp eager
     private Authority authority;
 }

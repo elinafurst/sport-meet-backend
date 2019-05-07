@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -19,4 +20,5 @@ public class UnitDto {
     private Map<UUID, String> admins; //TODO MAP
     private Map<UUID, String> members;
     private long noOfMembers;
+    private boolean isMember;
 }

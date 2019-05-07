@@ -1,6 +1,7 @@
 package se.elfu.sportprojectbackend.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,10 +10,12 @@ import se.elfu.sportprojectbackend.controller.model.EventCreationDto;
 import se.elfu.sportprojectbackend.controller.parm.Param;
 import se.elfu.sportprojectbackend.service.EventService;
 
+import javax.validation.Valid;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("events")
+@RequestMapping()
 @Slf4j
 public class EventController {
 
@@ -22,79 +25,81 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @PostMapping
-    public ResponseEntity createEvent(@RequestBody EventCreationDto eventCreationDto){
+    @PostMapping("events")
+    public ResponseEntity createEvent(@Valid @RequestBody EventCreationDto eventCreationDto){
         log.info("CREATE event {} ", eventCreationDto);
         return new ResponseEntity(eventService.createEvent(eventCreationDto), HttpStatus.CREATED);
     }
 
-    @PostMapping("sports")
-    //TODO autorize admin
-    public ResponseEntity createSport(@RequestBody String sport){
-        log.info("CREATE sport {} ", sport);
-        return new ResponseEntity(eventService.createSport(sport), HttpStatus.CREATED);
+    @PutMapping("events/{eventNumber}")
+    public ResponseEntity updateEvent(@Valid @RequestBody EventCreationDto eventCreationDto,@PathVariable("eventNumber")  UUID eventNumber){
+        log.info("CREATE event {} ", eventCreationDto);
+        return ResponseEntity.ok(eventService.updateEvent(eventNumber, eventCreationDto));
     }
 
-    @GetMapping("sports")
-    //TODO autorize user
+
+    @GetMapping("events/sports")
     public ResponseEntity getSports(){
         log.info("GET sports {} ");
         return ResponseEntity.ok(eventService.getSports());
     }
 
-    @GetMapping("{eventNumber}")
+    @GetMapping("events/locations/{city}")
+    public ResponseEntity getAreasForCity(@PathVariable("city") String city){
+        log.info("GET locations for city {} ", city);
+        return ResponseEntity.ok(eventService.getAreasForCity(city));
+    }
+
+    @GetMapping("events/{eventNumber}")
     public ResponseEntity getEvent(@PathVariable("eventNumber") UUID eventNumber){
         log.info("GET event {} ", eventNumber);
         return ResponseEntity.ok(eventService.getEvent(eventNumber));
     }
 
-    @PostMapping("{eventNumber}/comments")
-    public ResponseEntity createCommentEvent(@PathVariable("eventNumber") UUID eventNumber, @RequestBody CommentCreationDto commentCreationDto){
+    @PostMapping("events/{eventNumber}/comments")
+    public ResponseEntity createCommentEvent(@PathVariable("eventNumber") UUID eventNumber, @Valid @RequestBody CommentCreationDto commentCreationDto){
         log.info("POST Comment event {} ", eventNumber);
         return new ResponseEntity(eventService.createCommentEvent(eventNumber, commentCreationDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("{eventNumber}/comments")
-    public ResponseEntity getCommentsForEvent(@PathVariable("eventNumber") UUID eventNumber){
+    @GetMapping("events/{eventNumber}/comments")
+    public ResponseEntity getCommentsForEvent(@PathVariable("eventNumber") UUID eventNumber,
+                                              @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                              @RequestParam(name = "size", defaultValue = "10", required = false) int size){
         log.info("GET comments for event {} ", eventNumber);
         Param param = Param.builder()
-                .page(0)
-                .size(10)
+                .page(page)
+                .size(size)
                 .build();
+
         return ResponseEntity.ok(eventService.getCommentsForEvent(eventNumber, param));
     }
 
-    @DeleteMapping("comments/{commentNumber}")
+    @DeleteMapping("events/comments/{commentNumber}")
     public ResponseEntity deleteCommentForActiveUser(@PathVariable("commentNumber") UUID commentNumber){
         log.info("DELETE comment {} ", commentNumber);
         eventService.deleteCommentForActiveUser(commentNumber);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("{eventNumber}/users")
-    public ResponseEntity joinEvent(@PathVariable("eventNumber")UUID eventNumber){
-        log.info("Join event {} ", eventNumber);
-        eventService.joinEvent(eventNumber);
-        return ResponseEntity.noContent().build();
-    }
 
-    @PutMapping("{eventNumber}/creator") // TODO better api path
-    public ResponseEntity cancelEvent(@PathVariable("eventNumber")UUID eventNumber){
+    @GetMapping("events/{eventNumber}/creator") // TODO better api path
+    public ResponseEntity cancelEvent(@PathVariable("eventNumber") UUID eventNumber){
         log.info("Cancel event {} ", eventNumber);
         eventService.cancelEvent(eventNumber);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("{eventNumber}/users")
-    public ResponseEntity leaveEvent(@PathVariable("eventNumber")UUID eventNumber){
-        log.info("Leave event {} ", eventNumber);
-        eventService.leaveEvent(eventNumber);
+    @DeleteMapping("events/{eventNumber}/requests")
+    public ResponseEntity cancelRequest(@PathVariable("eventNumber")UUID eventNumber){
+        log.info("Cancel request {} ", eventNumber);
+        eventService.cancelRequest(eventNumber);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
+    @GetMapping("open/events")
     public ResponseEntity getEvents(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
-                                    @RequestParam(name = "size", defaultValue = "18", required = false) int size,
+                                    @RequestParam(name = "size", defaultValue = "6", required = false) int size,
                                     @RequestParam(name = "fromDate", required = false) String fromDate,
                                     @RequestParam(name = "toDate", required = false) String toDate,
                                     @RequestParam(name = "type", required = false) String type,
@@ -109,7 +114,35 @@ public class EventController {
                 .city(city)
                 .area(area)
                 .build();
+
         log.info("GET events");
         return ResponseEntity.ok(eventService.getEvents(param));
     }
+
+    @GetMapping("events/units")
+    public ResponseEntity getEventsForUnitsUserFollows(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                    @RequestParam(name = "size", defaultValue = "18", required = false) int size) {
+        Param param = Param.builder()
+                .page(page)
+                .size(size)
+                .build();
+        log.info("GET events for units user follows");
+
+        return ResponseEntity.ok(eventService.getEventsForUnitsUserFollows(param));
+    }
+
+    @GetMapping("events/creator")
+    public ResponseEntity getEventsCreatorOf(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                             @RequestParam(name = "size", defaultValue = "6", required = false) int size,
+                                             @RequestParam(name = "active", defaultValue = "1", required = false) boolean active) {
+        Param param = Param.builder()
+                .page(page)
+                .size(size)
+                .active(active)
+                .build();
+        log.info("GET events creator of active: {}", active);
+
+        return ResponseEntity.ok(eventService.getEventsCreatorOf(param));
+    }
+
 }

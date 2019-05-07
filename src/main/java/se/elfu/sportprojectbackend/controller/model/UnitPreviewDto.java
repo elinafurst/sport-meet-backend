@@ -15,5 +15,6 @@ public class UnitPreviewDto {
     private UUID unitNumber;
     private String name;
     private String description;
-    private long noOfMembers;
+    private int noOfMembers;
+    private Long noOfEvents;
 }

@@ -58,4 +58,16 @@ public final class DateTimeParser {
     public static LocalDateTime expirationDateTime() {
         return LocalDateTime.now().plusMinutes(30);
     }
+
+    public static String formatDateTime(LocalDateTime dateTime) {
+        try{
+            return dateTime.format(DATE_TIME_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Invalid date");
+        } catch (NullPointerException e) {
+            throw new BadRequestException("Date or time is missing");
+        } catch (Exception e) {
+            throw new BadRequestException("Invalid date");
+        }
+    }
 }

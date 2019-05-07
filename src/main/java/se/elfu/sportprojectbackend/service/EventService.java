@@ -4,15 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import se.elfu.sportprojectbackend.controller.model.CommentCreationDto;
-import se.elfu.sportprojectbackend.controller.model.CommentDto;
-import se.elfu.sportprojectbackend.controller.model.EventDto;
-import se.elfu.sportprojectbackend.controller.model.EventCreationDto;
+import org.springframework.transaction.annotation.Transactional;
+import se.elfu.sportprojectbackend.controller.model.*;
 import se.elfu.sportprojectbackend.controller.parm.Param;
-import se.elfu.sportprojectbackend.repository.CommentRepository;
-import se.elfu.sportprojectbackend.repository.EventRepository;
-import se.elfu.sportprojectbackend.repository.LocationRepository;
-import se.elfu.sportprojectbackend.repository.SportRepository;
+import se.elfu.sportprojectbackend.exception.customException.BadRequestException;
+import se.elfu.sportprojectbackend.repository.*;
 import se.elfu.sportprojectbackend.repository.model.*;
 import se.elfu.sportprojectbackend.service.helper.EntityRepositoryHelper;
 import se.elfu.sportprojectbackend.service.helper.FilterRepositoryHelper;
@@ -37,14 +33,18 @@ public class EventService {
     private final LocationRepository locationRepository;
     private final CommentRepository commentRepository;
     private final SportRepository sportRepository;
+    private final RequestRepository requestRepository;
+    private final MessageRepository messageRepository;
     private final FilterRepositoryHelper filterRepositoryHelper;
     private final EntityRepositoryHelper entityRepositoryHelper;
 
-    public EventService(EventRepository eventRepository, LocationRepository locationRepository, CommentRepository commentRepository, SportRepository sportRepository, FilterRepositoryHelper filterRepositoryHelper, EntityRepositoryHelper entityRepositoryHelper) {
+    public EventService(EventRepository eventRepository, LocationRepository locationRepository, CommentRepository commentRepository, SportRepository sportRepository, RequestRepository requestRepository, MessageRepository messageRepository, FilterRepositoryHelper filterRepositoryHelper, EntityRepositoryHelper entityRepositoryHelper) {
         this.eventRepository = eventRepository;
         this.locationRepository = locationRepository;
         this.commentRepository = commentRepository;
         this.sportRepository = sportRepository;
+        this.requestRepository = requestRepository;
+        this.messageRepository = messageRepository;
         this.filterRepositoryHelper = filterRepositoryHelper;
         this.entityRepositoryHelper = entityRepositoryHelper;
     }
@@ -52,20 +52,24 @@ public class EventService {
     public UUID createEvent(EventCreationDto eventCreationDto) {
         User user = entityRepositoryHelper.getActiveUser();
         Sport sport = entityRepositoryHelper.getSport(eventCreationDto.getSport());
-        Unit unit = validator.isEventRelatedToUnit(eventCreationDto);
         LocalDateTime eventStart = DateTimeParser.parseDateTime(eventCreationDto.getEventStartDate(), eventCreationDto.getEventStartTime());
-        Location location = isLocationInDataBase(eventCreationDto);
+        Location location = entityRepositoryHelper.getLocation(eventCreationDto.getCity(), eventCreationDto.getArea());
+
+        Unit unit = validator.isEventRelatedToUnit(eventCreationDto);
 
         return eventRepository.save(EventConverter.createFrom(eventCreationDto, sport, user, unit, eventStart, location)).getEventNumber();
     }
 
-    // TODO admin stuff
-    public Sport createSport(String name) {
-        Sport sport = Sport.builder()
-                .name(name)
-                .build();
-        sportRepository.save(sport);
-        return null;
+    public UUID updateEvent(UUID eventNumver, EventCreationDto eventCreationDto){
+        User user = entityRepositoryHelper.getActiveUser();
+        Event event = entityRepositoryHelper.getEvent(eventNumver);
+        Sport sport = entityRepositoryHelper.getSport(eventCreationDto.getSport());
+        LocalDateTime eventStart = DateTimeParser.parseDateTime(eventCreationDto.getEventStartDate(), eventCreationDto.getEventStartTime());
+        Location location = entityRepositoryHelper.getLocation(eventCreationDto.getCity(), eventCreationDto.getArea());
+
+        Unit unit = validator.isEventRelatedToUnit(eventCreationDto);
+
+        return eventRepository.save(EventConverter.updateFrom(event, eventCreationDto, sport, user, unit, eventStart, location)).getEventNumber();
     }
 
     public Set<String> getSports() {
@@ -75,8 +79,7 @@ public class EventService {
                 .collect(Collectors.toSet());
     }
 
-    public List<EventDto> getEvents(Param p) {
-
+    public PageDto getEvents(Param p) {
         if(Stream.of(p.getFromDate(), p.getToDate()).allMatch(x -> x == null)){
             log.info(p.toString());
             return filterRepositoryHelper.filterNotByAnyDates(p);
@@ -161,89 +164,115 @@ public class EventService {
         return filterRepositoryHelper.findAll(p);
     }
 
-    public void joinEvent(UUID eventNumber) {
-        User user = entityRepositoryHelper.getActiveUser();
-        Event event = entityRepositoryHelper.getEvent(eventNumber);
-        Validator.isEventActive(event);
-        Validator.isEventFull(event);
-        event.addParticipant(user);
-        eventRepository.save(event);
-    }
-
-    public void leaveEvent(UUID eventNumber) {
-        User user = entityRepositoryHelper.getActiveUser();
-        Event event = entityRepositoryHelper.getEvent(eventNumber);
-        event.removeParticipant(user);
-        eventRepository.save(event);
-    }
-
     public EventDto getEvent(UUID eventNumber) {
+        User user = entityRepositoryHelper.getActiveUser();
         Event event = entityRepositoryHelper.getEvent(eventNumber);
-        return EventConverter.createFrom(event);
+
+        RequestStatus request = requestRepository.findByEventAndSender(event, user)
+                .map(Request::getRequestStatus)
+                .orElse(null);
+
+        return EventConverter.createFrom(event, request, user);
     }
+
 
     public void updateExpiredEvents() {
         LocalDateTime expirationDateTime = DateTimeParser.expirationDateTime();
 
         List<Event> events = eventRepository.findByEventStartLessThanAndActiveTrue(expirationDateTime)
                 .stream()
-                .map(this::inActivateEvent)
+                .map(this::inactivateEvent)
                 .collect(Collectors.toList());
 
         log.info("Found {} events", events.size());
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void cancelEvent(UUID eventNumber) {
         User user = entityRepositoryHelper.getActiveUser();
         Event event = entityRepositoryHelper.getEvent(eventNumber);
         Validator.isCreator(event, user);
-        inActivateEvent(event);
+
+        inactivateEvent(event);
+        markAsCancelledOnRequest(event);
     }
 
-    //TODO null and check make prettyyyy
-
-    private Location isLocationInDataBase(EventCreationDto eventCreationDto) {
-        Location location = locationRepository.findByCity(eventCreationDto.getCity())
-                .orElse(new Location(null, eventCreationDto.getCity(), null));
-
-        if(location.getArea() == null && location.getId() == null) {
-            return location.toBuilder().area(Area.builder().area(eventCreationDto.getArea()).build()).build();
-        }
-        if(!location.getArea().getArea().equalsIgnoreCase(eventCreationDto.getArea())){
-            return Location.builder().city(location.getCity()).area(Area.builder().area(eventCreationDto.getArea()).build()).build();
-        }
-        return location;
-    }
-    private Event inActivateEvent(Event event){
-        event.setActive(false);
-        return eventRepository.save(event);
-    }
-
-    public Comment createCommentEvent(UUID eventNumber, CommentCreationDto commentCreationDto) {
+    @Transactional(rollbackFor = Exception.class)
+    public void cancelRequest(UUID eventNumber) {
         User user = entityRepositoryHelper.getActiveUser();
         Event event = entityRepositoryHelper.getEvent(eventNumber);
-        Comment comment = commentRepository.save(CommentConverter.createFrom(commentCreationDto, event, user));
-        return comment;
+        markAsLeftOnRequest(event, user);
+
+        if(event.removeParticipant(user)) {
+            eventRepository.save(event);
+        }
+    }
+
+    private void markAsLeftOnRequest(Event event, User user) {
+        requestRepository.findByEventAndSender(event, user)
+                .map(request -> request.toBuilder().requestStatus(RequestStatus.LEFT).build())
+                .map(requestRepository::save)
+                .orElseThrow(() -> new BadRequestException("Kan inte lämna annons du inte är med i"));
+    }
+
+    private void markAsCancelledOnRequest(Event event) {
+        requestRepository.findByEvent(event)
+                .stream()
+                .map(request -> request.toBuilder().requestStatus(RequestStatus.CANCELLED).build())
+                .map(requestRepository::save);
+
+    }
+
+    public UUID createCommentEvent(UUID eventNumber, CommentCreationDto commentCreationDto) {
+        User user = entityRepositoryHelper.getActiveUser();
+        Event event = entityRepositoryHelper.getEvent(eventNumber);
+
+        return commentRepository.save(CommentConverter.createFrom(commentCreationDto, event, user)).getCommentNumber();
     }
 
     public void deleteCommentForActiveUser(UUID commentNumber){
         User user = entityRepositoryHelper.getActiveUser();
         Comment comment = entityRepositoryHelper.getComment(commentNumber);
         Validator.isUserSameAsCommentator(user, comment);
-        commentRepository.delete(comment);
 
+        commentRepository.delete(comment);
     }
 
     public List<CommentDto> getCommentsForEvent(UUID eventNumber, Param param) {
-        Page<Comment> comments = commentRepository.findByEventEventNumber(eventNumber, param.getCommentPageRequest());
-        return sortComments(comments);
-    }
-
-    private List<CommentDto> sortComments(Page<Comment> comments) {
         User user = entityRepositoryHelper.getActiveUser();
+        Event event = entityRepositoryHelper.getEvent(eventNumber);
 
-        return comments.stream()
+        return commentRepository.findByEvent(event, param.getCommentPageRequest())
+                .stream()
                 .map(comment -> CommentConverter.createFrom(comment, validator.isOwnerOfComment(comment, user)))
                 .collect(Collectors.toList());
+    }
+
+    public Set<String> getAreasForCity(String city) {
+        return locationRepository.findByCity(city)
+                .stream()
+                .map(Location::getArea)
+                .map(Area::getArea)
+                .collect(Collectors.toSet());
+    }
+
+    private Event inactivateEvent(Event event){
+        event.setActive(false);
+        return eventRepository.save(event);
+    }
+
+    public PageDto getEventsCreatorOf(Param param) {
+        User user = entityRepositoryHelper.getActiveUser();
+
+        if(param.isActive()){
+            return filterRepositoryHelper.filterByCreatorOfActive(user, param);
+        }
+        return filterRepositoryHelper.filterByCreatorOfInActive(user, param);
+    }
+
+    public PageDto getEventsForUnitsUserFollows(Param param) {
+        User user = entityRepositoryHelper.getActiveUser();
+
+        return filterRepositoryHelper.filterByUnitsUserFollows(param, user.getMemberOf());
     }
 }

@@ -1,13 +1,17 @@
 package se.elfu.sportprojectbackend.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import se.elfu.sportprojectbackend.controller.model.UnitCreationDto;
 import se.elfu.sportprojectbackend.controller.parm.Param;
 import se.elfu.sportprojectbackend.service.UnitService;
 
+import javax.validation.Valid;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -22,7 +26,7 @@ public class UnitController {
     }
 
     @PostMapping
-    public ResponseEntity createUnit(@RequestBody UnitCreationDto unitCreationDto) {
+    public ResponseEntity createUnit(@Valid @RequestBody UnitCreationDto unitCreationDto) {
         log.info("CREATE unit {} ", unitCreationDto);
         return new ResponseEntity(unitService.createUnit(unitCreationDto), HttpStatus.CREATED);
     }
@@ -33,10 +37,20 @@ public class UnitController {
         return new ResponseEntity(unitService.getUnit(unitNumber), HttpStatus.CREATED);
     }
 
-    @GetMapping("admin")
-    public ResponseEntity getUnitsActiveUserIsAdminOf() {
-        log.info("GET Units active user is admin of {}");
-        return ResponseEntity.ok(unitService.getUnitsActiveUserIsAdminOf());
+    @GetMapping("admins")
+    public ResponseEntity getUnitsActiveUserIsAdminOf(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                                      @RequestParam(name = "size", defaultValue = "18", required = false) int size,
+                                                      @RequestParam(name="keyvalue") boolean keyvalue) {
+        if(keyvalue) {
+            log.info("GET Units active user is admin of keypairs{}");
+            return  ResponseEntity.ok(unitService.getUnitsActiveUserIsAdminOfKeyPairs());
+        }
+        log.info("GET Units active user is admin of");
+        Param param = Param.builder()
+                .size(18)
+                .page(0)
+                .build();
+        return  ResponseEntity.ok(unitService.getUnitsActiveUserIsAdminOf(param));
     }
 
     @GetMapping("{unitNumber}/events")
@@ -49,9 +63,23 @@ public class UnitController {
         return ResponseEntity.ok(unitService.getEventsForUnit(unitNumber, param));
     }
 
+    @GetMapping("{unitNumber}/joiner")
+    public ResponseEntity joinGroup(@PathVariable("unitNumber") UUID unitNumber) {
+        log.info("PUT join unit {}", unitNumber);
+
+        unitService.joinGroup(unitNumber);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("{unitNumber}/joiner")
+    public ResponseEntity leaveGroup(@PathVariable("unitNumber") UUID unitNumber) {
+        unitService.leaveGroup(unitNumber);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping
     public ResponseEntity getUnits(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
-                                   @RequestParam(name = "size", defaultValue = "18", required = false) int size) {
+                                   @RequestParam(name = "size", defaultValue = "6", required = false) int size) {
         log.info("GET units");
         Param param = Param.builder()
                 .page(page)

@@ -48,7 +48,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .withClient(CLIEN_ID)
                 .secret(encodedClientSecret)
                 .authorities("ROLE_USER", "ROLE_ADMIN")
-                .authorizedGrantTypes(GRANT_TYPE_PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN, IMPLICIT ) //TODO authorization coed
+                .authorizedGrantTypes(GRANT_TYPE_PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN, IMPLICIT ) //TODO authorization code
                 .scopes(SCOPE_READ, SCOPE_WRITE, TRUST)
                 .accessTokenValiditySeconds(ACCESS_TOKEN_VALIDITY_SECONDS)
                 .refreshTokenValiditySeconds(REFRESH_TOKEN_VALIDITY_SECONDS);

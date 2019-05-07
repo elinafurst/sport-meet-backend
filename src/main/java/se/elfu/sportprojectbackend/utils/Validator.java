@@ -1,8 +1,7 @@
 package se.elfu.sportprojectbackend.utils;
 
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import se.elfu.sportprojectbackend.controller.model.EventCreationDto;
+import se.elfu.sportprojectbackend.controller.model.events.EventCreationDto;
 import se.elfu.sportprojectbackend.exception.customException.BadRequestException;
 import se.elfu.sportprojectbackend.exception.customException.ListEmptyException;
 import se.elfu.sportprojectbackend.repository.*;

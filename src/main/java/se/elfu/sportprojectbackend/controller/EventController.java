@@ -1,17 +1,15 @@
 package se.elfu.sportprojectbackend.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import se.elfu.sportprojectbackend.controller.model.CommentCreationDto;
-import se.elfu.sportprojectbackend.controller.model.EventCreationDto;
-import se.elfu.sportprojectbackend.controller.parm.Param;
+import se.elfu.sportprojectbackend.controller.model.events.comments.CommentCreationDto;
+import se.elfu.sportprojectbackend.controller.model.events.EventCreationDto;
+import se.elfu.sportprojectbackend.controller.params.Param;
 import se.elfu.sportprojectbackend.service.EventService;
 
 import javax.validation.Valid;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController

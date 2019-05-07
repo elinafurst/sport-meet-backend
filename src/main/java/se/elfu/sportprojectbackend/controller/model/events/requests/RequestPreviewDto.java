@@ -1,12 +1,12 @@
-package se.elfu.sportprojectbackend.controller.model;
+package se.elfu.sportprojectbackend.controller.model.events.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import se.elfu.sportprojectbackend.controller.model.events.requests.messages.MessageDto;
 import se.elfu.sportprojectbackend.repository.model.RequestStatus;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 

@@ -46,17 +46,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                    .antMatchers("/account/signup", "/oauth/token","oauth/authorization", "/swagger-ui.html" ).permitAll()
+                .antMatchers("/account/signup", "/oauth/token","oauth/authorization", "/swagger-ui.html" ).permitAll()
                 .antMatchers( HttpMethod.GET,"/open/events/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin();
 
-    }
-
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("events");
     }
 
     @Bean

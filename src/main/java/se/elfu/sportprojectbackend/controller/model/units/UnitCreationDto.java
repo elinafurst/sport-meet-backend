@@ -1,4 +1,4 @@
-package se.elfu.sportprojectbackend.controller.model;
+package se.elfu.sportprojectbackend.controller.model.units;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

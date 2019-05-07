@@ -1,7 +1,7 @@
 package se.elfu.sportprojectbackend.utils.converter;
 
-import se.elfu.sportprojectbackend.controller.model.CommentCreationDto;
-import se.elfu.sportprojectbackend.controller.model.CommentDto;
+import se.elfu.sportprojectbackend.controller.model.events.comments.CommentCreationDto;
+import se.elfu.sportprojectbackend.controller.model.events.comments.CommentDto;
 import se.elfu.sportprojectbackend.repository.model.Comment;
 import se.elfu.sportprojectbackend.repository.model.Event;
 import se.elfu.sportprojectbackend.repository.model.User;
@@ -14,7 +14,7 @@ import java.util.UUID;
 public final class CommentConverter {
 
 
-    public static Comment createFrom(CommentCreationDto entity, Event event, User user) {
+    public static Comment createComment(CommentCreationDto entity, Event event, User user) {
         return Comment.builder()
                 .commentNumber(UUID.randomUUID())
                 .comment(entity.getComment())
@@ -24,7 +24,7 @@ public final class CommentConverter {
                 .build();
     }
 
-    public static CommentDto createFrom(Comment entity, boolean owner) {
+    public static CommentDto createCommentDto(Comment entity, boolean owner) {
         return CommentDto.builder()
                 .commentNumber(entity.getCommentNumber())
                 .comment(entity.getComment())

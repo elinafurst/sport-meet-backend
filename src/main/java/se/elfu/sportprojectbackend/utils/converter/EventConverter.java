@@ -2,9 +2,10 @@ package se.elfu.sportprojectbackend.utils.converter;
 
 import org.springframework.data.domain.Page;
 import se.elfu.sportprojectbackend.controller.model.*;
+import se.elfu.sportprojectbackend.controller.model.events.EventCreationDto;
+import se.elfu.sportprojectbackend.controller.model.events.EventDto;
 import se.elfu.sportprojectbackend.repository.model.*;
 import se.elfu.sportprojectbackend.utils.DateTimeParser;
-import se.elfu.sportprojectbackend.utils.HttpHeadersMapper;
 import se.elfu.sportprojectbackend.utils.KeyValueMapper;
 import se.elfu.sportprojectbackend.utils.Validator;
 
@@ -14,8 +15,7 @@ import java.util.stream.Collectors;
 
 public final class EventConverter {
 
-
-    public static Event createFrom(EventCreationDto dto, Sport sport, User user, Unit unit, LocalDateTime eventStart, Location location){
+    public static Event createEvent(EventCreationDto dto, Sport sport, User user, Unit unit, LocalDateTime eventStart, Location location){
         return Event.builder()
                 .eventNumber(UUID.randomUUID())
                 .name(dto.getName())
@@ -31,7 +31,7 @@ public final class EventConverter {
                 .build();
     }
 
-    public static Event updateFrom (Event event, EventCreationDto dto, Sport sport, User user, Unit unit, LocalDateTime eventStart, Location location) {
+    public static Event updateFrom(Event event, EventCreationDto dto, Sport sport, User user, Unit unit, LocalDateTime eventStart, Location location) {
         return event.toBuilder()
                 .name(dto.getName())
                 .description(dto.getDescription())
@@ -45,7 +45,7 @@ public final class EventConverter {
                 .build();
     }
 
-    public static EventDto createFrom(Event entity, RequestStatus requestStatus, User user) {
+    public static EventDto createEventDto(Event entity, RequestStatus requestStatus, User user) {
         return EventDto.builder()
                 .eventNumber(entity.getEventNumber())
                 .name(entity.getName())
@@ -67,7 +67,7 @@ public final class EventConverter {
                 .build();
     }
 
-    public static EventDto createFromList(Event entity) {
+    private static EventDto createEventDto(Event entity) {
         return EventDto.builder()
                 .eventNumber(entity.getEventNumber())
                 .name(entity.getName())
@@ -90,13 +90,13 @@ public final class EventConverter {
         return PageDto.builder()
                 .totalElements(entities.getTotalElements())
                 .totalPages(entities.getTotalPages() -1)
-                .dtos(createFromEntities(entities))
+                .dtos(createEventDtoList(entities))
                 .build();
     }
 
-    private static List<Object> createFromEntities(Page<Event> entities){
+    private static List<Object> createEventDtoList(Page<Event> entities){
         return entities.stream()
-                .map(EventConverter::createFromList)
+                .map(EventConverter::createEventDto)
                 .collect(Collectors.toList());
     }
 

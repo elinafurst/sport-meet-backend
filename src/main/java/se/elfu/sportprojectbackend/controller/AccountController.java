@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.web.bind.annotation.*;
-import se.elfu.sportprojectbackend.controller.model.UserCreationDto;
+import se.elfu.sportprojectbackend.controller.model.users.UserCreationDto;
 import se.elfu.sportprojectbackend.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;

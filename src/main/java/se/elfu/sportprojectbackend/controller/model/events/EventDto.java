@@ -1,9 +1,10 @@
-package se.elfu.sportprojectbackend.controller.model;
+package se.elfu.sportprojectbackend.controller.model.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import se.elfu.sportprojectbackend.controller.model.events.comments.CommentDto;
 import se.elfu.sportprojectbackend.repository.model.RequestStatus;
 
 import java.util.List;

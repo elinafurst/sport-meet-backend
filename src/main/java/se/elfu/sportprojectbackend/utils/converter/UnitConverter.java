@@ -1,22 +1,16 @@
 package se.elfu.sportprojectbackend.utils.converter;
 
-import org.springframework.data.domain.Page;
-import se.elfu.sportprojectbackend.controller.model.PageDto;
-import se.elfu.sportprojectbackend.controller.model.UnitCreationDto;
-import se.elfu.sportprojectbackend.controller.model.UnitDto;
-import se.elfu.sportprojectbackend.controller.model.UnitPreviewDto;
-import se.elfu.sportprojectbackend.repository.model.Event;
+import se.elfu.sportprojectbackend.controller.model.units.UnitCreationDto;
+import se.elfu.sportprojectbackend.controller.model.units.UnitDto;
+import se.elfu.sportprojectbackend.controller.model.units.UnitPreviewDto;
 import se.elfu.sportprojectbackend.repository.model.Unit;
-import se.elfu.sportprojectbackend.repository.model.User;
 import se.elfu.sportprojectbackend.utils.KeyValueMapper;
-import se.elfu.sportprojectbackend.utils.Validator;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class UnitConverter {
 
-    public static Unit createFrom(UnitCreationDto dto) {
+    public static Unit createUnit(UnitCreationDto dto) {
         return Unit.builder()
                 .unitNumber(UUID.randomUUID())
                 .name(dto.getName())
@@ -24,7 +18,7 @@ public final class UnitConverter {
                 .build();
     }
 
-    public static UnitPreviewDto createToPreview(Unit entity, Long noOfEvents) {
+    public static UnitPreviewDto createUnitPreviewDto(Unit entity, Long noOfEvents) {
         return UnitPreviewDto.builder()
                 .unitNumber(entity.getUnitNumber())
                 .name(entity.getName())
@@ -34,7 +28,7 @@ public final class UnitConverter {
                 .build();
     }
 
-    public static UnitDto createFrom(Unit entity, boolean isMember) {
+    public static UnitDto createUnitDto(Unit entity, boolean isMember) {
         return UnitDto.builder()
                 .unitNumber(entity.getUnitNumber())
                 .name(entity.getName())

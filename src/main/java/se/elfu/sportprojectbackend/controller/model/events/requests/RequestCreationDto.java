@@ -1,4 +1,4 @@
-package se.elfu.sportprojectbackend.controller.model;
+package se.elfu.sportprojectbackend.controller.model.events.requests;
 
 import lombok.*;
 

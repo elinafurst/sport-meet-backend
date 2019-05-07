@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.elfu.sportprojectbackend.controller.model.LocationDto;
+import se.elfu.sportprojectbackend.controller.model.events.locations.LocationDto;
 import se.elfu.sportprojectbackend.service.AdminService;
 
 import javax.validation.Valid;

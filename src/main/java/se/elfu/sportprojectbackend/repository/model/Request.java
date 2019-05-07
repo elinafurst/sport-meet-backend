@@ -33,4 +33,8 @@ public class Request {
     public void addMessage(Message message) {
         this.messages.add(message);
     }
+
+    public void setRequestStatus(RequestStatus requestStatus){
+        this.requestStatus = requestStatus;
+    }
 }

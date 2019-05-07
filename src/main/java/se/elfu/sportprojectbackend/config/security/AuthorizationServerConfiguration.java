@@ -24,9 +24,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Value("${spring.security.refresh}")
     private int REFRESH_TOKEN_VALIDITY_SECONDS;
     private static final String GRANT_TYPE_PASSWORD = "password";
-    private static final String AUTHORIZATION_CODE = "authorization_code";
     private static final String REFRESH_TOKEN = "refresh_token";
-    private static final String IMPLICIT = "implicit";
     private static final String SCOPE_READ = "preview";
     private static final String SCOPE_WRITE = "write";
     private static final String TRUST = "trust";
@@ -48,7 +46,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .withClient(CLIEN_ID)
                 .secret(encodedClientSecret)
                 .authorities("ROLE_USER", "ROLE_ADMIN")
-                .authorizedGrantTypes(GRANT_TYPE_PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN, IMPLICIT ) //TODO authorization code
+                .authorizedGrantTypes(GRANT_TYPE_PASSWORD, REFRESH_TOKEN )
                 .scopes(SCOPE_READ, SCOPE_WRITE, TRUST)
                 .accessTokenValiditySeconds(ACCESS_TOKEN_VALIDITY_SECONDS)
                 .refreshTokenValiditySeconds(REFRESH_TOKEN_VALIDITY_SECONDS);

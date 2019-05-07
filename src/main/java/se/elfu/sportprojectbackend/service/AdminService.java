@@ -2,7 +2,7 @@ package se.elfu.sportprojectbackend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import se.elfu.sportprojectbackend.controller.model.LocationDto;
+import se.elfu.sportprojectbackend.controller.model.events.locations.LocationDto;
 import se.elfu.sportprojectbackend.repository.LocationRepository;
 import se.elfu.sportprojectbackend.repository.SportRepository;
 import se.elfu.sportprojectbackend.repository.model.Sport;
@@ -33,6 +33,6 @@ public class AdminService {
         validator.isCityInDatabase(locationDto.getCity());
 
         locationDto.getAreas().forEach(area ->
-                locationRepository.save(LocationConverter.createFrom(locationDto.getCity(), area)));
+                locationRepository.save(LocationConverter.createLocation(locationDto.getCity(), area)));
     }
 }

@@ -2,11 +2,14 @@ package se.elfu.sportprojectbackend.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.elfu.sportprojectbackend.controller.model.*;
-import se.elfu.sportprojectbackend.controller.parm.Param;
+import se.elfu.sportprojectbackend.controller.model.events.EventCreationDto;
+import se.elfu.sportprojectbackend.controller.model.events.EventDto;
+import se.elfu.sportprojectbackend.controller.model.events.comments.CommentCreationDto;
+import se.elfu.sportprojectbackend.controller.model.events.comments.CommentDto;
+import se.elfu.sportprojectbackend.controller.params.Param;
 import se.elfu.sportprojectbackend.exception.customException.BadRequestException;
 import se.elfu.sportprojectbackend.repository.*;
 import se.elfu.sportprojectbackend.repository.model.*;
@@ -16,6 +19,7 @@ import se.elfu.sportprojectbackend.utils.Validator;
 import se.elfu.sportprojectbackend.utils.converter.CommentConverter;
 import se.elfu.sportprojectbackend.utils.converter.EventConverter;
 import se.elfu.sportprojectbackend.utils.DateTimeParser;
+import se.elfu.sportprojectbackend.utils.converter.RequestConverter;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -57,7 +61,7 @@ public class EventService {
 
         Unit unit = validator.isEventRelatedToUnit(eventCreationDto);
 
-        return eventRepository.save(EventConverter.createFrom(eventCreationDto, sport, user, unit, eventStart, location)).getEventNumber();
+        return eventRepository.save(EventConverter.createEvent(eventCreationDto, sport, user, unit, eventStart, location)).getEventNumber();
     }
 
     public UUID updateEvent(UUID eventNumver, EventCreationDto eventCreationDto){
@@ -172,7 +176,7 @@ public class EventService {
                 .map(Request::getRequestStatus)
                 .orElse(null);
 
-        return EventConverter.createFrom(event, request, user);
+        return EventConverter.createEventDto(event, request, user);
     }
 
 
@@ -210,15 +214,15 @@ public class EventService {
 
     private void markAsLeftOnRequest(Event event, User user) {
         requestRepository.findByEventAndSender(event, user)
-                .map(request -> request.toBuilder().requestStatus(RequestStatus.LEFT).build())
+                .map(request -> RequestConverter.setRequestStatusUpdateFrom(request, RequestStatus.LEFT))
                 .map(requestRepository::save)
                 .orElseThrow(() -> new BadRequestException("Kan inte lämna annons du inte är med i"));
     }
-
+//TODO
     private void markAsCancelledOnRequest(Event event) {
         requestRepository.findByEvent(event)
                 .stream()
-                .map(request -> request.toBuilder().requestStatus(RequestStatus.CANCELLED).build())
+                .map(request -> RequestConverter.setRequestStatusUpdateFrom(request, RequestStatus.CANCELLED))
                 .map(requestRepository::save);
 
     }
@@ -227,7 +231,7 @@ public class EventService {
         User user = entityRepositoryHelper.getActiveUser();
         Event event = entityRepositoryHelper.getEvent(eventNumber);
 
-        return commentRepository.save(CommentConverter.createFrom(commentCreationDto, event, user)).getCommentNumber();
+        return commentRepository.save(CommentConverter.createComment(commentCreationDto, event, user)).getCommentNumber();
     }
 
     public void deleteCommentForActiveUser(UUID commentNumber){
@@ -244,7 +248,7 @@ public class EventService {
 
         return commentRepository.findByEvent(event, param.getCommentPageRequest())
                 .stream()
-                .map(comment -> CommentConverter.createFrom(comment, validator.isOwnerOfComment(comment, user)))
+                .map(comment -> CommentConverter.createCommentDto(comment, validator.isOwnerOfComment(comment, user)))
                 .collect(Collectors.toList());
     }
 

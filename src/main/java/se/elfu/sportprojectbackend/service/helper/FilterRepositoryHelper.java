@@ -5,7 +5,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import se.elfu.sportprojectbackend.controller.model.PageDto;
-import se.elfu.sportprojectbackend.controller.parm.Param;
+import se.elfu.sportprojectbackend.controller.params.Param;
 import se.elfu.sportprojectbackend.repository.EventRepository;
 import se.elfu.sportprojectbackend.repository.model.*;
 import se.elfu.sportprojectbackend.utils.DateTimeParser;

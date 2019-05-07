@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import se.elfu.sportprojectbackend.controller.model.RequestCreationDto;
-import se.elfu.sportprojectbackend.controller.parm.Param;
+import se.elfu.sportprojectbackend.controller.model.events.requests.RequestCreationDto;
+import se.elfu.sportprojectbackend.controller.params.Param;
 import se.elfu.sportprojectbackend.service.RequestService;
 
 import java.util.UUID;

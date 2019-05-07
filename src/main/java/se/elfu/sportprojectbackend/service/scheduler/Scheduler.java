@@ -19,7 +19,7 @@ public class Scheduler {
 
     @Scheduled(fixedRate = 60000)//300000)
     public void updateExpiredEvents() {
-        log.info("Update passed event", LocalDateTime.now());
+        log.info("Update passed events {}", LocalDateTime.now());
         eventService.updateExpiredEvents();
     }
 }

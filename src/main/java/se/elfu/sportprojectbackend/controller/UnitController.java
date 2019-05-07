@@ -1,17 +1,14 @@
 package se.elfu.sportprojectbackend.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import se.elfu.sportprojectbackend.controller.model.UnitCreationDto;
-import se.elfu.sportprojectbackend.controller.parm.Param;
+import se.elfu.sportprojectbackend.controller.model.units.UnitCreationDto;
+import se.elfu.sportprojectbackend.controller.params.Param;
 import se.elfu.sportprojectbackend.service.UnitService;
 
 import javax.validation.Valid;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController

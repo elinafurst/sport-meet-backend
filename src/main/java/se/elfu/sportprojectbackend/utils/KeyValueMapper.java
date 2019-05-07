@@ -1,7 +1,5 @@
 package se.elfu.sportprojectbackend.utils;
 
-import org.springframework.data.domain.Page;
-import se.elfu.sportprojectbackend.controller.model.EventDto;
 import se.elfu.sportprojectbackend.repository.model.Event;
 import se.elfu.sportprojectbackend.repository.model.Unit;
 import se.elfu.sportprojectbackend.repository.model.User;

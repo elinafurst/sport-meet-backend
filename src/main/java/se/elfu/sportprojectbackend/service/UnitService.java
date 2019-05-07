@@ -5,7 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.elfu.sportprojectbackend.controller.model.*;
-import se.elfu.sportprojectbackend.controller.parm.Param;
+import se.elfu.sportprojectbackend.controller.model.units.UnitCreationDto;
+import se.elfu.sportprojectbackend.controller.model.units.UnitDto;
+import se.elfu.sportprojectbackend.controller.model.units.UnitPreviewDto;
+import se.elfu.sportprojectbackend.controller.params.Param;
 import se.elfu.sportprojectbackend.repository.EventRepository;
 import se.elfu.sportprojectbackend.repository.UnitRepository;
 import se.elfu.sportprojectbackend.repository.UserRepository;
@@ -41,7 +44,7 @@ public class UnitService {
     @Transactional(rollbackFor = Exception.class)
     public UUID createUnit(UnitCreationDto unitCreationDto) {
         validator.isUnitNameOccupied(unitCreationDto.getName());
-        Unit unit = unitRepository.save(UnitConverter.createFrom(unitCreationDto));
+        Unit unit = unitRepository.save(UnitConverter.createUnit(unitCreationDto));
         makeGroupAdmin(unit);
 
         return unit.getUnitNumber();
@@ -52,7 +55,7 @@ public class UnitService {
         Unit unit = entityRepositoryHelper.getUnit(unitNumber);
         boolean isMember = Validator.isActiveUserMemberOfUnit(unit, user.getId());
 
-        return UnitConverter.createFrom(unit, isMember);
+        return UnitConverter.createUnitDto(unit, isMember);
     }
 
     public PageDto getUnitsActiveUserIsAdminOf(Param param){
@@ -117,7 +120,7 @@ public class UnitService {
 
     private List<Object> sortUnits(Page<Unit> units) {
         return units.stream()
-                .map(unit -> UnitConverter.createToPreview(unit, eventRepository.countByByUnit(unit)))
+                .map(unit -> UnitConverter.createUnitPreviewDto(unit, eventRepository.countByByUnit(unit)))
                 .sorted(Comparator.comparing(UnitPreviewDto::getNoOfEvents))
                 .collect(Collectors.toList());
     }

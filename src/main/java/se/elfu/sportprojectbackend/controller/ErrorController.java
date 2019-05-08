@@ -14,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import se.elfu.sportprojectbackend.exception.ErrorDetails;
 import se.elfu.sportprojectbackend.exception.customException.BadRequestException;
+import se.elfu.sportprojectbackend.exception.customException.InvalidTokenException;
 import se.elfu.sportprojectbackend.exception.customException.ListEmptyException;
 import se.elfu.sportprojectbackend.exception.customException.NotFoundException;
 
@@ -58,6 +59,14 @@ public class ErrorController extends ResponseEntityExceptionHandler {
                 Arrays.asList(ex.getMessage()));
         log.error("{}", ex.getLocalizedMessage(), ex);
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public final ResponseEntity<ErrorDetails> handleInvalidTokenException(InvalidTokenException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), "INVALID TOKEN",
+                Arrays.asList(ex.getMessage()));
+        log.error("{}", ex.getLocalizedMessage(), ex);
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 
     @Override

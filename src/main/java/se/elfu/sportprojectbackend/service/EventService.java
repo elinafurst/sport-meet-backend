@@ -59,6 +59,7 @@ public class EventService {
         LocalDateTime eventStart = DateTimeParser.parseDateTime(eventCreationDto.getEventStartDate(), eventCreationDto.getEventStartTime());
         Location location = entityRepositoryHelper.getLocation(eventCreationDto.getCity(), eventCreationDto.getArea());
 
+        Validator.isEventStartInFuture(eventStart);
         Unit unit = validator.isEventRelatedToUnit(eventCreationDto);
 
         return eventRepository.save(EventConverter.createEvent(eventCreationDto, sport, user, unit, eventStart, location)).getEventNumber();
@@ -179,16 +180,13 @@ public class EventService {
         return EventConverter.createEventDto(event, request, user);
     }
 
-
-    public void updateExpiredEvents() {
+    public long checkIfEventIsAboutToExpire() {
         LocalDateTime expirationDateTime = DateTimeParser.expirationDateTime();
 
-        List<Event> events = eventRepository.findByEventStartLessThanAndActiveTrue(expirationDateTime)
+        return eventRepository.findByEventStartLessThanAndActiveTrue(expirationDateTime)
                 .stream()
                 .map(this::inactivateEvent)
-                .collect(Collectors.toList());
-
-        log.info("Found {} events", events.size());
+                .collect(Collectors.toList()).size();
     }
 
     @Transactional(rollbackFor = Exception.class)

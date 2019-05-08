@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import se.elfu.sportprojectbackend.exception.customException.BadRequestException;
+import se.elfu.sportprojectbackend.exception.customException.InvalidTokenException;
 import se.elfu.sportprojectbackend.exception.customException.NotFoundException;
 import se.elfu.sportprojectbackend.repository.*;
 import se.elfu.sportprojectbackend.repository.model.*;
@@ -39,10 +40,11 @@ public class EntityRepositoryHelper {
         this.requestRepository = requestRepository;
     }
 
+    // Gets active user username from security context.
     public String getCurrentEmail(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth == null){
-            throw new RuntimeException("Can't make request, invalid token"); //TODO change exception type
+            throw new InvalidTokenException("Can't make request, invalid token");
         }
         String email = auth.getName().toLowerCase();
         log.info("Active user is: {}", email);

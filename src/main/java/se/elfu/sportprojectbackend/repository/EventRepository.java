@@ -1,7 +1,6 @@
 package se.elfu.sportprojectbackend.repository;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
@@ -47,10 +46,9 @@ public interface EventRepository extends PagingAndSortingRepository<Event, Long>
 
     Long countByByUnit(Unit unitNumber);
 
-
     List<Event> findByEventStartLessThanAndActiveTrue(LocalDateTime expirationDateTime);
 
     Page<Event> findByCreatedByAndActiveTrue(User user, Pageable eventPageRequest);
 
-    Page<Event> findByCreatedByAndActiveFalse(User user, PageRequest eventPageRequest);
+    Page<Event> findByCreatedByAndActiveFalse(User user, Pageable eventPageRequest);
 }

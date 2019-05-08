@@ -22,6 +22,8 @@ public class User {
     private String firstname;
     private String lastname;
     private String username;
+    @Column(length = 200)
+
     private String description;
     @OneToOne(cascade = CascadeType.ALL)
     private Account account;

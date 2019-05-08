@@ -22,6 +22,7 @@ public class Unit {
     @Column(columnDefinition = "BINARY(16)")
     private UUID unitNumber;
     private String name;
+    @Column(length = 200)
     private String description;
     @ManyToMany(mappedBy = "adminOf")
     private Set<User> admins;

@@ -35,7 +35,6 @@ public class EventController {
         return ResponseEntity.ok(eventService.updateEvent(eventNumber, eventCreationDto));
     }
 
-
     @GetMapping("events/sports")
     public ResponseEntity getSports(){
         log.info("GET sports {} ");

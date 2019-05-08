@@ -8,6 +8,8 @@ import se.elfu.sportprojectbackend.repository.*;
 import se.elfu.sportprojectbackend.repository.model.*;
 import se.elfu.sportprojectbackend.service.helper.EntityRepositoryHelper;
 
+import java.time.LocalDateTime;
+
 @Component
 public final class Validator {
 
@@ -30,12 +32,6 @@ public final class Validator {
     public static void isEventActive(Event event) {
         if(!event.isActive()){
             throw new BadRequestException("Annonsen har passerat");
-        }
-    }
-
-    public static void isEventFull(Event event) {
-        if(event.getMaxParticipants() <= event.getParticipants().size()){
-            throw new BadRequestException("Fullt antal");
         }
     }
 
@@ -63,13 +59,19 @@ public final class Validator {
 
     public static void isCreatorOfEvent(User user, User eventOwner) {
         if(user.getId().equals(eventOwner.getId())){
-            throw new BadRequestException("Kan inte skicka medverkande förfrågande på din egna annons");
+            throw new BadRequestException("Kan inte skicka medverkande förfrågande på ditt egna evenemang");
         }
     }
 
     public static void isEmpty(int size) {
         if(size == 0){
             throw new ListEmptyException();
+        }
+    }
+
+    public static void isEventStartInFuture(LocalDateTime eventStart) {
+        if(eventStart.isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Felaktig start tid");
         }
     }
 

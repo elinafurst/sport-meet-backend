@@ -23,7 +23,6 @@ public class EventCreationDto {
     private String eventStartDate;
     @NotBlank(message = "Starttid saknas")
     private String eventStartTime;
-    private int maxParticipants;
     private UUID byUnit;
     @NotBlank(message = "Stad saknas")
     private String city;

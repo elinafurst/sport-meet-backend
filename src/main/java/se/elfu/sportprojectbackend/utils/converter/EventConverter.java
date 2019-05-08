@@ -22,7 +22,6 @@ public final class EventConverter {
                 .description(dto.getDescription())
                 .sport(sport)
                 .eventStart(eventStart)
-                .maxParticipants(dto.getMaxParticipants())
                 .createdBy(user)
                 .byUnit(unit)
                 .active(true)
@@ -31,13 +30,15 @@ public final class EventConverter {
                 .build();
     }
 
+    /**
+     * Example of toBuilder = true. Updates only som fields. Keeps eventNumber from entity
+     */
     public static Event updateFrom(Event event, EventCreationDto dto, Sport sport, User user, Unit unit, LocalDateTime eventStart, Location location) {
         return event.toBuilder()
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .sport(sport)
                 .eventStart(eventStart)
-                .maxParticipants(dto.getMaxParticipants())
                 .createdBy(user)
                 .byUnit(unit)
                 .meetingPoint(dto.getMeetingPoint())
@@ -54,7 +55,6 @@ public final class EventConverter {
                 .eventStartDate(DateTimeParser.formatDate(entity.getEventStart()))
                 .eventStartTime(DateTimeParser.formatTime(entity.getEventStart()))
                 .noOfParticipants(entity.getParticipants().size())
-                .maxParticipants(entity.getMaxParticipants())
                 .participants(KeyValueMapper.mapUsers(entity.getParticipants()))
                 .createdBy(KeyValueMapper.mapUser(entity.getCreatedBy()))
                 .byUnit(KeyValueMapper.mapUnit(entity.getByUnit()))
@@ -76,7 +76,6 @@ public final class EventConverter {
                 .eventStartDate(DateTimeParser.formatDate(entity.getEventStart()))
                 .eventStartTime(DateTimeParser.formatTime(entity.getEventStart()))
                 .noOfParticipants(entity.getParticipants().size())
-                .maxParticipants(entity.getMaxParticipants())
                 .active(entity.isActive())
                 .city(entity.getLocation().getCity())
                 .area(entity.getLocation().getArea().getArea())
@@ -84,6 +83,9 @@ public final class EventConverter {
                 .build();
     }
 
+    /**
+     * Converts to PageDto. To get total hits of query and pages available and a list of objects from current page.
+     */
     public static PageDto convertToPageDto(Page<Event> entities){
         Validator.isEmpty(entities.getSize());
 

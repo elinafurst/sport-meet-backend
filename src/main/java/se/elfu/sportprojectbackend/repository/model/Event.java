@@ -22,9 +22,9 @@ public class Event {
     @Column(columnDefinition = "BINARY(16)")
     private UUID eventNumber;
     private String name;
+    @Column(length = 200)
     private String description;
     private LocalDateTime eventStart;
-    private int maxParticipants;
     @ManyToMany(cascade = CascadeType.MERGE)
     private Set<User> participants;
     @ManyToOne

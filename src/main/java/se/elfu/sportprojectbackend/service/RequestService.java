@@ -47,7 +47,6 @@ public class RequestService {
 
         Validator.isCreatorOfEvent(user, eventOwner);
         Validator.isEventActive(event);
-        Validator.isEventFull(event);
         validator.isRequestAlreadySent(event, user);
 
         Message message = messageRepository.save(MessageConverter.createMessage(requestCreationDto, user, eventOwner));
@@ -111,7 +110,6 @@ public class RequestService {
         if(requestAnswer){
             Event event = entityRepositoryHelper.getEvent(request.getEvent().getEventNumber());
             Validator.isEventActive(event);
-            Validator.isEventFull(event);
             event.addParticipant(request.getSender());
             eventRepository.save(event);
         }

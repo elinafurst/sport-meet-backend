@@ -24,13 +24,13 @@ public class UnitController {
 
     @PostMapping
     public ResponseEntity createUnit(@Valid @RequestBody UnitCreationDto unitCreationDto) {
-        log.info("CREATE unit {} ", unitCreationDto);
+        log.info("Create unit {} ", unitCreationDto);
         return new ResponseEntity(unitService.createUnit(unitCreationDto), HttpStatus.CREATED);
     }
 
     @GetMapping("{unitNumber}")
     public ResponseEntity getUnit(@PathVariable("unitNumber") UUID unitNumber) {
-        log.info("GET unit {}", unitNumber);
+        log.info("Get unit {}", unitNumber);
         return new ResponseEntity(unitService.getUnit(unitNumber), HttpStatus.CREATED);
     }
 
@@ -39,37 +39,42 @@ public class UnitController {
                                                       @RequestParam(name = "size", defaultValue = "18", required = false) int size,
                                                       @RequestParam(name="keyvalue") boolean keyvalue) {
         if(keyvalue) {
-            log.info("GET Units active user is admin of keypairs{}");
+            log.info("GET Units active user is admin of keypairs");
             return  ResponseEntity.ok(unitService.getUnitsActiveUserIsAdminOfKeyPairs());
         }
-        log.info("GET Units active user is admin of");
         Param param = Param.builder()
                 .size(18)
                 .page(0)
                 .build();
+        log.info("GET Units active user is admin of, params {}", param);
+
         return  ResponseEntity.ok(unitService.getUnitsActiveUserIsAdminOf(param));
     }
 
     @GetMapping("{unitNumber}/events")
-    public ResponseEntity getEventsForUnit(@PathVariable("unitNumber") UUID unitNumber) {
-        log.info("GET units {}", unitNumber);
+    public ResponseEntity getEventsForUnit(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                           @RequestParam(name = "size", defaultValue = "18", required = false) int size,
+                                            @PathVariable("unitNumber") UUID unitNumber) {
         Param param = Param.builder()
-                .size(18)
-                .page(0)
+                .size(size)
+                .page(page)
                 .build();
+
+        log.info("GET events for unit: {}, params: {}", unitNumber, param);
+
         return ResponseEntity.ok(unitService.getEventsForUnit(unitNumber, param));
     }
 
     @GetMapping("{unitNumber}/joiner")
     public ResponseEntity joinGroup(@PathVariable("unitNumber") UUID unitNumber) {
-        log.info("PUT join unit {}", unitNumber);
-
+        log.info("Join unit {}", unitNumber);
         unitService.joinGroup(unitNumber);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("{unitNumber}/joiner")
     public ResponseEntity leaveGroup(@PathVariable("unitNumber") UUID unitNumber) {
+        log.info("Leave unit {}", unitNumber);
         unitService.leaveGroup(unitNumber);
         return ResponseEntity.noContent().build();
     }
@@ -77,11 +82,12 @@ public class UnitController {
     @GetMapping
     public ResponseEntity getUnits(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
                                    @RequestParam(name = "size", defaultValue = "6", required = false) int size) {
-        log.info("GET units");
         Param param = Param.builder()
                 .page(page)
                 .size(size)
                 .build();
+        log.info("Geet units, params: {}", param);
+
         return ResponseEntity.ok(unitService.getUnits(param));
     }
 }

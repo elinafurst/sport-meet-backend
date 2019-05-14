@@ -19,11 +19,12 @@ public class Message {
     private Long id;
     @Column(columnDefinition = "BINARY(16)")
     private UUID messageNumber;
+    @Column(length = 1000)
     private String message;
     private LocalDateTime timeStamp;
-    @OneToOne
+    @OneToOne()
     private User author;
-    @OneToOne
+    @OneToOne()
     private User reader;
     private boolean isRead;
 }

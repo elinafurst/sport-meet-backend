@@ -33,7 +33,7 @@ public final class EventConverter {
     /**
      * Example of toBuilder = true. Updates only som fields. Keeps eventNumber from entity
      */
-    public static Event updateFrom(Event event, EventCreationDto dto, Sport sport, User user, Unit unit, LocalDateTime eventStart, Location location) {
+    public static Event updateFrom(Event event, EventCreationDto dto, Sport sport, User user, Unit unit, LocalDateTime eventStart, Location location, boolean active) {
         return event.toBuilder()
                 .name(dto.getName())
                 .description(dto.getDescription())
@@ -41,6 +41,7 @@ public final class EventConverter {
                 .eventStart(eventStart)
                 .createdBy(user)
                 .byUnit(unit)
+                .active(active)
                 .meetingPoint(dto.getMeetingPoint())
                 .location(location)
                 .build();
@@ -54,6 +55,7 @@ public final class EventConverter {
                 .sport(entity.getSport().getName())
                 .eventStartDate(DateTimeParser.formatDate(entity.getEventStart()))
                 .eventStartTime(DateTimeParser.formatTime(entity.getEventStart()))
+                .eventStartDateTime(DateTimeParser.formatDateTimeSwedish(entity.getEventStart()))
                 .noOfParticipants(entity.getParticipants().size())
                 .participants(KeyValueMapper.mapUsers(entity.getParticipants()))
                 .createdBy(KeyValueMapper.mapUser(entity.getCreatedBy()))
@@ -75,6 +77,7 @@ public final class EventConverter {
                 .sport(entity.getSport().getName())
                 .eventStartDate(DateTimeParser.formatDate(entity.getEventStart()))
                 .eventStartTime(DateTimeParser.formatTime(entity.getEventStart()))
+                .eventStartDateTime(DateTimeParser.formatDateTimeSwedish(entity.getEventStart()))
                 .noOfParticipants(entity.getParticipants().size())
                 .active(entity.isActive())
                 .city(entity.getLocation().getCity())
@@ -101,5 +104,25 @@ public final class EventConverter {
                 .map(EventConverter::createEventDto)
                 .collect(Collectors.toList());
     }
+
+    public static Location createLocation(String cityName, String areaName){
+        return Location.builder()
+                .city(cityName)
+                .area(createArea(areaName))
+                .build();
+    }
+
+    public static Area createArea(String areaName){
+        return Area.builder()
+                .area(areaName)
+                .build();
+    }
+
+    public static Sport createSport(String name){
+        return Sport.builder()
+                .name(name)
+                .build();
+    }
+
 
 }

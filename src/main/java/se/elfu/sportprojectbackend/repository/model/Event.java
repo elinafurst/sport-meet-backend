@@ -22,18 +22,18 @@ public class Event {
     @Column(columnDefinition = "BINARY(16)")
     private UUID eventNumber;
     private String name;
-    @Column(length = 200)
+    @Column(length = 1000)
     private String description;
     private LocalDateTime eventStart;
     @ManyToMany(cascade = CascadeType.MERGE)
     private Set<User> participants;
-    @ManyToOne
+    @ManyToOne()
     private User createdBy;
-    @ManyToOne
+    @ManyToOne()
     private Unit byUnit;
-    @OneToOne
+    @OneToOne()
     private Sport sport;
-    @OneToOne(cascade = CascadeType.ALL) //TODO not ALL
+    @OneToOne()
     private Location location;
     private boolean active;
     private String meetingPoint;

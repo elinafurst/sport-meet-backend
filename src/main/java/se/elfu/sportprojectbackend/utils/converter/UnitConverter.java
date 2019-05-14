@@ -14,7 +14,7 @@ public final class UnitConverter {
         return Unit.builder()
                 .unitNumber(UUID.randomUUID())
                 .name(dto.getName())
-                .description(dto.getName())
+                .description(dto.getDescription())
                 .build();
     }
 

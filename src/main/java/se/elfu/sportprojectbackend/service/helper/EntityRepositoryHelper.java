@@ -27,8 +27,9 @@ public class EntityRepositoryHelper {
     private final CommentRepository commentRepository;
     private final LocationRepository locationRepository;
     private final RequestRepository requestRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
-    public EntityRepositoryHelper(EventRepository eventRepository, SportRepository sportRepository, UnitRepository unitRepository, UserRepository userRepository, AuthorityRepository authorityRepository, AccountRepository accountRepository, CommentRepository commentRepository, LocationRepository locationRepository, RequestRepository requestRepository) {
+    public EntityRepositoryHelper(EventRepository eventRepository, SportRepository sportRepository, UnitRepository unitRepository, UserRepository userRepository, AuthorityRepository authorityRepository, AccountRepository accountRepository, CommentRepository commentRepository, LocationRepository locationRepository, RequestRepository requestRepository, PasswordResetTokenRepository passwordResetTokenRepository) {
         this.eventRepository = eventRepository;
         this.authorityRepository = authorityRepository;
         this.sportRepository = sportRepository;
@@ -38,6 +39,7 @@ public class EntityRepositoryHelper {
         this.commentRepository = commentRepository;
         this.locationRepository = locationRepository;
         this.requestRepository = requestRepository;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
     }
 
     // Gets active user username from security context.
@@ -71,7 +73,7 @@ public class EntityRepositoryHelper {
 
     public Sport getSport(String sport) {
         return sportRepository.findByNameIgnoreCase(sport)
-                .orElseThrow(() -> new BadRequestException("Sport don't exists")); //TODO
+                .orElseThrow(() -> new BadRequestException("Sport don't exists"));
     }
 
     public Account getAccount(String username){
@@ -102,5 +104,11 @@ public class EntityRepositoryHelper {
     public Request getRequest(UUID requestNumber) {
        return requestRepository.findByRequestNumber(requestNumber)
                 .orElseThrow(() -> new NotFoundException("Request", requestNumber.toString()));
+    }
+
+    public PasswordResetToken getPasswordResetToken(UUID token) {
+        return passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(() -> new NotFoundException("token", token.toString()));
+
     }
 }

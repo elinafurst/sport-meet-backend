@@ -7,10 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.web.bind.annotation.*;
 import se.elfu.sportprojectbackend.controller.model.users.UserCreationDto;
-import se.elfu.sportprojectbackend.service.UserService;
+import se.elfu.sportprojectbackend.service.AccountService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("account")
@@ -24,10 +25,10 @@ public class AccountController {
     private ConsumerTokenServices consumerTokenServices;
     @Autowired
     private HttpServletRequest request;
-    private final UserService userService;
+    private final AccountService accountService;
 
-    public AccountController(UserService userService) {
-        this.userService = userService;
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
     }
 
     @DeleteMapping("signout")
@@ -45,14 +46,36 @@ public class AccountController {
 
     @PostMapping("signup")
     public ResponseEntity createAccount(@Valid @RequestBody UserCreationDto userCreationDto) {
-        log.info("POST Create account ");
-        return new ResponseEntity(userService.registerUser(userCreationDto), HttpStatus.CREATED);
+        log.info("Create account {} ", userCreationDto);
+        return new ResponseEntity(accountService.registerUser(userCreationDto), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping()
+    public ResponseEntity deleteAccount() {
+        log.info("Delete Account");
+        accountService.deleteAccount();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("password/reset")
-    public String resetPassword( @RequestBody String test) {
-        log.info("POST Create account ");
-        return "INNE";
+    public ResponseEntity resetPassword(@RequestBody String email) {
+        log.info("Reset password account for {} ", email);
+        accountService.resetPassword(email);
+        return ResponseEntity.ok().build();
     }
+
+    @GetMapping("password/update")
+    public ResponseEntity validatePasswordToken(@RequestParam("token") UUID token){
+        log.info("Validate password token");
+
+        accountService.validatePasswordToken(token);
+        return ResponseEntity.ok().build();
     }
+    @GetMapping("password/save")
+    public ResponseEntity savePassword(@RequestParam(name ="token") UUID token, @RequestParam(name ="password") String password){
+        log.info("Password save ");
+        accountService.saveNewPassword(password, token);
+        return ResponseEntity.ok().build();
+    }
+}
 

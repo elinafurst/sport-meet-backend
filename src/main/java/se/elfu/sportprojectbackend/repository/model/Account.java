@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class Account {
 
     @Id
@@ -19,6 +19,6 @@ public class Account {
     private Long id;
     private String email;
     private String password;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL) //TODO inte fetchtyp eager
+    @ManyToOne()
     private Authority authority;
 }

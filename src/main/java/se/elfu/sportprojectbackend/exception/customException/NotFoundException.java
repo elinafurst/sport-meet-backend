@@ -9,6 +9,6 @@ public class NotFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public NotFoundException(String type, String number){
-        super("Kunde inte hitta " + type + " med: "+ number);
+        super("Could not find " + type + " with id: "+ number);
     }
 }

@@ -65,16 +65,17 @@ public class EventService {
         return eventRepository.save(EventConverter.createEvent(eventCreationDto, sport, user, unit, eventStart, location)).getEventNumber();
     }
 
-    public UUID updateEvent(UUID eventNumver, EventCreationDto eventCreationDto){
+    public UUID updateEvent(UUID eventNumber, EventCreationDto eventCreationDto){
         User user = entityRepositoryHelper.getActiveUser();
-        Event event = entityRepositoryHelper.getEvent(eventNumver);
+        Event event = entityRepositoryHelper.getEvent(eventNumber);
         Sport sport = entityRepositoryHelper.getSport(eventCreationDto.getSport());
         LocalDateTime eventStart = DateTimeParser.parseDateTime(eventCreationDto.getEventStartDate(), eventCreationDto.getEventStartTime());
         Location location = entityRepositoryHelper.getLocation(eventCreationDto.getCity(), eventCreationDto.getArea());
 
+        boolean active = Validator.isActiveInFuture(eventStart);
         Unit unit = validator.isEventRelatedToUnit(eventCreationDto);
 
-        return eventRepository.save(EventConverter.updateFrom(event, eventCreationDto, sport, user, unit, eventStart, location)).getEventNumber();
+        return eventRepository.save(EventConverter.updateFrom(event, eventCreationDto, sport, user, unit, eventStart, location, active)).getEventNumber();
     }
 
     public Set<String> getSports() {
@@ -214,15 +215,12 @@ public class EventService {
         requestRepository.findByEventAndSender(event, user)
                 .map(request -> RequestConverter.setRequestStatusUpdateFrom(request, RequestStatus.LEFT))
                 .map(requestRepository::save)
-                .orElseThrow(() -> new BadRequestException("Kan inte lämna annons du inte är med i"));
+                .orElseThrow(() -> new BadRequestException("Can't leave event you're not part of"));
     }
-//TODO
+
     private void markAsCancelledOnRequest(Event event) {
         requestRepository.findByEvent(event)
-                .stream()
-                .map(request -> RequestConverter.setRequestStatusUpdateFrom(request, RequestStatus.CANCELLED))
-                .map(requestRepository::save);
-
+                .forEach(request -> requestRepository.save(RequestConverter.setRequestStatusUpdateFrom(request, RequestStatus.CANCELLED)));
     }
 
     public UUID createCommentEvent(UUID eventNumber, CommentCreationDto commentCreationDto) {

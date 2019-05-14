@@ -22,6 +22,7 @@ public class EventDto {
     private String sport;
     private String eventStartDate;
     private String eventStartTime;
+    private String eventStartDateTime;
     private int noOfParticipants;
     private Map<UUID, String> participants;
     private Map<UUID, String> createdBy;

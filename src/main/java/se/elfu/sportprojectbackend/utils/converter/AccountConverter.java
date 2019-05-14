@@ -4,11 +4,13 @@ import se.elfu.sportprojectbackend.controller.model.users.UserCreationDto;
 import se.elfu.sportprojectbackend.controller.model.users.UserDto;
 import se.elfu.sportprojectbackend.repository.model.Account;
 import se.elfu.sportprojectbackend.repository.model.Authority;
+import se.elfu.sportprojectbackend.repository.model.PasswordResetToken;
 import se.elfu.sportprojectbackend.repository.model.User;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-public final class UserConverter {
+public final class AccountConverter {
 
     public static UserDto createUserDto(User entity) {
         return UserDto.builder()
@@ -20,7 +22,7 @@ public final class UserConverter {
                 .build();
     }
 
-    public static User updateEntity(User entity, UserDto dto) {
+    public static User updateUser(User entity, UserDto dto) {
         return entity.toBuilder()
                 .firstname(dto.getFirstname())
                 .lastname(dto.getLastname())
@@ -47,5 +49,20 @@ public final class UserConverter {
                 .authority(authority)
                 .build();
 
+    }
+
+    public static PasswordResetToken createPasswordResetToken(Account account) {
+        return PasswordResetToken.builder()
+                .token(UUID.randomUUID())
+                .account(account)
+                .expiration(LocalDateTime.now().plusHours(24))
+                .build();
+
+    }
+
+    public static Account updateFrom(PasswordResetToken passwordResetToken, String encoded) {
+        return passwordResetToken.getAccount().toBuilder()
+                .password(encoded)
+                .build();
     }
 }

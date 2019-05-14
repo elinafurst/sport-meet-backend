@@ -23,5 +23,5 @@ public class RequestPreviewDto {
     private Map<UUID, String> receiver;
     private MessageDto message;
     private boolean isRequester;
-    private boolean isRead;
+
 }

@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
-    @Resource(name = "userService")
+    @Resource(name = "accountService")
     private UserDetailsService userDetailsService;
 
     @Override
@@ -43,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/account/signup", "/oauth/token","oauth/authorization", "/swagger-ui.html" ).permitAll() // Open
+                .antMatchers("/account/signup", "/oauth/token", "account/password/reset","/account/password/save**" ,"account/password/update*", "oauth/authorization", "/swagger-ui.html" ).permitAll() // Open
                 .antMatchers( HttpMethod.GET,"/open/events/**").permitAll() // open
                 .anyRequest().authenticated() // All other request needs authentication
                 .and()

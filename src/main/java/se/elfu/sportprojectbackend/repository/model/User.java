@@ -22,14 +22,13 @@ public class User {
     private String firstname;
     private String lastname;
     private String username;
-    @Column(length = 200)
-
+    @Column(length = 1000)
     private String description;
     @OneToOne(cascade = CascadeType.ALL)
     private Account account;
-    @ManyToMany
+    @ManyToMany()
     private Set<Unit> adminOf;
-    @ManyToMany
+    @ManyToMany()
     private Set<Unit> memberOf;
     @ManyToMany(mappedBy = "participants")
     private Set<Event> events;

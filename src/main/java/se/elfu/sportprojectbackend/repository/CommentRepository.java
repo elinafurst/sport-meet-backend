@@ -8,6 +8,7 @@ import se.elfu.sportprojectbackend.repository.model.Comment;
 import se.elfu.sportprojectbackend.repository.model.Event;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,4 +18,6 @@ public interface CommentRepository extends CrudRepository<Comment, Long> {
 
 
     Page<Comment> findByEvent(Event event, Pageable request);
+    List<Comment> findByEvent(Event event);
+
 }

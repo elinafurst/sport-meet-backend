@@ -11,4 +11,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     Set<Location> findByCity(String city);
 
     Optional<Location> findByCityAndAreaArea(String city, String area);
+
+    int countByCity(String city);
 }

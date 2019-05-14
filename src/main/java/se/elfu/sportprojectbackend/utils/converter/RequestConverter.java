@@ -19,7 +19,6 @@ public final class RequestConverter {
                 .sender(user)
                 .requestStatus(RequestStatus.PENDING)
                 .messages(new HashSet<>(Arrays.asList(message)))
-                .isRead(false)
                 .build();
     }
 
@@ -38,20 +37,12 @@ public final class RequestConverter {
                 .requestStatus(request.getRequestStatus())
                 .messages(MessageConverter.createMessageDtoList(request.getMessages(), user))
                 .isRequester(Validator.isSameUser(request.getSender().getId(), user.getId()))
-                .isRead(request.isRead())
                 .build();
     }
-
 
     public static Request setRequestStatusUpdateFrom(Request request, RequestStatus requestStatus) {
         return request.toBuilder()
                 .requestStatus(requestStatus)
-                .build();
-    }
-
-    public static Request isReadUpdateFrom(Request request) {
-        return request.toBuilder()
-                .isRead(true)
                 .build();
     }
 
@@ -64,7 +55,6 @@ public final class RequestConverter {
                 .requestStatus(request.getRequestStatus())
                 .message(MessageConverter.createMessageDto(request.getMessages(), user))
                 .isRequester(Validator.isSameUser(request.getSender().getId(), user.getId()))
-                .isRead(request.isRead())
                 .build();
     }
 }

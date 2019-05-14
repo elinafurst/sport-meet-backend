@@ -23,21 +23,21 @@ public class RequestController {
 
     @PostMapping("events/{eventNumber}")
     public ResponseEntity joinEventRequest(@PathVariable("eventNumber") UUID eventNumber, @RequestBody RequestCreationDto requestCreationDto){
-        log.info("Join event request {} ", eventNumber);
+        log.info("Join event {}, request: {} ", eventNumber, requestCreationDto);
         return new ResponseEntity(requestService.joinEventRequest(eventNumber, requestCreationDto), HttpStatus.CREATED);
     }
 
 
     @PutMapping("{requestNumber}/messages")
     public ResponseEntity saveMessageForRequest(@PathVariable("requestNumber") UUID requestNumber, @RequestBody RequestCreationDto requestCreationDto){
-        log.info("Send message {} ", requestCreationDto);
+        log.info("Send message for {}, message: {} ", requestNumber, requestCreationDto);
         requestService.saveMessageForRequest(requestNumber, requestCreationDto);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{requestNumber}")
     public ResponseEntity answerRequest(@PathVariable("requestNumber") UUID requestNumber, @RequestBody boolean isApproved){
-        log.info("Request answer {} ", isApproved);
+        log.info("Answer request for: {} answer approved: {} ",requestNumber, isApproved);
         requestService.answerRequest(requestNumber, isApproved);
         return ResponseEntity.noContent().build();
     }
@@ -49,21 +49,8 @@ public class RequestController {
                 .page(page)
                 .size(size)
                 .build();
-        log.info("Get event requests {} ");
+        log.info("Get event requests, params {} ", param);
         return ResponseEntity.ok(requestService.getEventRequests(param));
-    }
-
-    @PutMapping("{requestNumber}/reader")
-    public ResponseEntity readRequest(@PathVariable("requestNumber") UUID requestNumber){
-        log.info("Put read request ");
-        requestService.readRequest(requestNumber);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("poll")
-    public ResponseEntity getNewRequestAndMessages(){
-        log.info("Get undread requests {} ");
-        return ResponseEntity.ok(requestService.getNewRequests());
     }
 
     @GetMapping("{requestNumber}")

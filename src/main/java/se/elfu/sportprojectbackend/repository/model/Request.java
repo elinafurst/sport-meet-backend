@@ -20,21 +20,17 @@ public class Request {
     @Column(columnDefinition = "BINARY(16)")
     private UUID requestNumber;
     private RequestStatus requestStatus;
-    @OneToOne
+    @OneToOne()
     private Event event;
-    @OneToOne
+    @OneToOne()
     private User sender;
-    @OneToOne
+    @OneToOne()
     private User receiver;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Message> messages;
-    private boolean isRead;
 
     public void addMessage(Message message) {
         this.messages.add(message);
     }
 
-    public void setRequestStatus(RequestStatus requestStatus){
-        this.requestStatus = requestStatus;
-    }
 }

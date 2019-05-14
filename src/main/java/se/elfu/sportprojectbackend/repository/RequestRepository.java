@@ -16,11 +16,8 @@ public interface RequestRepository extends CrudRepository<Request, Long> {
 
     Optional<Request> findByRequestNumber(UUID requestNumber);
 
-    List<Request> findByReceiverAndIsReadFalse(User user);
-
     Optional<Request> findByEventAndSender(Event event, User user);
 
-    List<Request> findBySender(User user);
-
     List<Request> findByEvent(Event event);
+
 }

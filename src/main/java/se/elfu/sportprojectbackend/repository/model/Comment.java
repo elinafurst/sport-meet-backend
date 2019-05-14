@@ -19,10 +19,11 @@ public class Comment {
     private Long id;
     @Column(columnDefinition = "BINARY(16)")
     private UUID commentNumber;
+    @Column(length = 1000)
     private String comment;
     private LocalDateTime timeStamp;
-    @ManyToOne
+    @ManyToOne()
     private User user;
-    @ManyToOne
+    @ManyToOne()
     private Event event;
 }

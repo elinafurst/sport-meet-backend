@@ -5,9 +5,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
+import se.elfu.sportprojectbackend.repository.model.Event;
 import se.elfu.sportprojectbackend.repository.model.Unit;
 import se.elfu.sportprojectbackend.repository.model.User;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;

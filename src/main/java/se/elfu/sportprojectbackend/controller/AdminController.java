@@ -25,13 +25,13 @@ public class AdminController {
 
     @PostMapping("sports")
     public ResponseEntity createSport(@Valid @RequestBody String sport){
-        log.info("CREATE sport {} ", sport);
+        log.info("Create sport {} ", sport);
         return new ResponseEntity(adminService.createSport(sport), HttpStatus.CREATED);
     }
 
     @PostMapping("locations")
     public ResponseEntity createLocation(@Valid @RequestBody LocationDto locationDto){
-        log.info("CREATE sport {} ", locationDto);
+        log.info("Create locations {} ", locationDto);
         adminService.createLocation(locationDto);
         return new ResponseEntity(HttpStatus.CREATED);
     }

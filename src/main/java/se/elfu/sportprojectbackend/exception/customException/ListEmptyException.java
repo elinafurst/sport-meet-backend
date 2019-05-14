@@ -9,6 +9,6 @@ public class ListEmptyException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public ListEmptyException(){
-        super("Kunde inte hitta några poster" );
+        super("Empty list" );
     }
 }

@@ -51,4 +51,8 @@ public interface EventRepository extends PagingAndSortingRepository<Event, Long>
     Page<Event> findByCreatedByAndActiveTrue(User user, Pageable eventPageRequest);
 
     Page<Event> findByCreatedByAndActiveFalse(User user, Pageable eventPageRequest);
+
+    List<Event> findByCreatedBy(User user);
+
+    List<Event> findByParticipantsIn(User user);
 }

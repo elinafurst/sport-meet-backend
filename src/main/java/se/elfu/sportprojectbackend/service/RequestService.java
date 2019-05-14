@@ -11,6 +11,7 @@ import se.elfu.sportprojectbackend.repository.EventRepository;
 import se.elfu.sportprojectbackend.repository.MessageRepository;
 import se.elfu.sportprojectbackend.repository.RequestRepository;
 import se.elfu.sportprojectbackend.repository.model.*;
+import se.elfu.sportprojectbackend.service.helper.EmailSender;
 import se.elfu.sportprojectbackend.service.helper.EntityRepositoryHelper;
 import se.elfu.sportprojectbackend.utils.Validator;
 import se.elfu.sportprojectbackend.utils.converter.MessageConverter;
@@ -26,6 +27,8 @@ public class RequestService {
 
     @Autowired
     private Validator validator;
+    @Autowired
+    private EmailSender emailSender;
 
     private final RequestRepository requestRepository;
     private final MessageRepository messageRepository;
@@ -51,8 +54,11 @@ public class RequestService {
 
         Message message = messageRepository.save(MessageConverter.createMessage(requestCreationDto, user, eventOwner));
         Request request = RequestConverter.createRequest(user, eventOwner, message, event);
+        request = requestRepository.save(request);
 
-        return requestRepository.save(request).getRequestNumber();
+        emailSender.sendNewRequestNotification(request);
+
+        return request.getRequestNumber();
     }
 
     public List<RequestPreviewDto> getEventRequests(Param param){
@@ -93,20 +99,10 @@ public class RequestService {
         RequestStatus requestStatus = RequestStatus.isAccepted(requestAnswer);
 
         requestRepository.save(RequestConverter.setRequestStatusUpdateFrom(request, requestStatus));
-        addPartcipantIfRequestAccepted(request, requestAnswer);
+        addParticipantIfRequestAccepted(request, requestAnswer);
     }
 
-    public int getNewRequests() {
-        User user = entityRepositoryHelper.getActiveUser();
-        return requestRepository.findByReceiverAndIsReadFalse(user).size();
-    }
-
-    public void readRequest(UUID requestNumber) {
-        Request request = entityRepositoryHelper.getRequest(requestNumber);
-        requestRepository.save(RequestConverter.isReadUpdateFrom(request));
-    }
-
-    private void addPartcipantIfRequestAccepted(Request request, boolean requestAnswer) {
+    private void addParticipantIfRequestAccepted(Request request, boolean requestAnswer) {
         if(requestAnswer){
             Event event = entityRepositoryHelper.getEvent(request.getEvent().getEventNumber());
             Validator.isEventActive(event);

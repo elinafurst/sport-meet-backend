@@ -24,5 +24,4 @@ public class RequestDto {
     private Map<UUID, String> receiver;
     private List<MessageDto> messages;
     private boolean isRequester;
-    private boolean isRead;
 }

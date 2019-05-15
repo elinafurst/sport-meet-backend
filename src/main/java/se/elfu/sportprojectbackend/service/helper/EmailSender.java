@@ -37,6 +37,7 @@ public class EmailSender {
                 "<a href=" + resetLink + ">länk</a>" +
                 "</div> <br>" +
                 "<div> Länken är giltig i 24 timmar. </div>";
+
         createEmail(mimeMessage, RESET_SUBJECT, htmlMsg, passwordResetToken.getAccount().getEmail());
     }
 
@@ -47,6 +48,7 @@ public class EmailSender {
                 "<div>" + request.getSender().getUsername() + "vill vara med i ditt evenemang " + request.getEvent().getName() + "<br>" +
                 "<a href=" + loginLink + ">Logga in</a>" + " och kollar vad hen har skrivit: " +
                 "</div>";
+
         createEmail(mimeMessage, REQUEST_SUBJECT, htmlMsg, request.getReceiver().getAccount().getEmail());
     }
 

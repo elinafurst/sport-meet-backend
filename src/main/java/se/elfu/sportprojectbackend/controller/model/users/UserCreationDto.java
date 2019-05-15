@@ -15,11 +15,11 @@ public class UserCreationDto {
 
     private String firstname;
     private String lastname;
-    @NotBlank(message = "Användarnamn saknas")
+    @NotBlank(message = "Username missing")
     private String username;
     private String description;
-    @NotBlank(message = "Email saknas")
+    @NotBlank(message = "Email missing")
     private String email;
-    @NotBlank(message = "Lösenord saknas")
+    @NotBlank(message = "Password missing")
     private String password;
 }

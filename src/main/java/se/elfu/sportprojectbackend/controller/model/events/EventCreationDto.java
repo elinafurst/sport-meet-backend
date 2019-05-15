@@ -14,20 +14,20 @@ import java.util.UUID;
 @Builder(toBuilder = true)
 public class EventCreationDto {
 
-    @NotBlank(message = "Namn saknas")
+    @NotBlank(message = "Name missing")
     private String name;
     private String description;
-    @NotBlank(message = "Typ av sport saknas")
+    @NotBlank(message = "Sport missing")
     private String sport;
-    @NotBlank(message = "Startdatum saknas")
+    @NotBlank(message = "Startdate missing")
     private String eventStartDate;
-    @NotBlank(message = "Starttid saknas")
+    @NotBlank(message = "Starttime missing")
     private String eventStartTime;
     private UUID byUnit;
-    @NotBlank(message = "Stad saknas")
+    @NotBlank(message = "City missing")
     private String city;
-    @NotBlank(message = "Område saknas")
+    @NotBlank(message = "Area missing")
     private String area;
-    @NotBlank(message = "Mötesplats saknas")
+    @NotBlank(message = "Meetingpoint missing")
     private String meetingPoint;
 }

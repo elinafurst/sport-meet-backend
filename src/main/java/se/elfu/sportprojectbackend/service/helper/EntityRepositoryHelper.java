@@ -41,8 +41,9 @@ public class EntityRepositoryHelper {
         this.requestRepository = requestRepository;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
     }
-
-    // Gets active user username from security context.
+    /**
+     *     Gets active users username from security context.
+     */
     public String getCurrentEmail(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth == null){
@@ -52,19 +53,24 @@ public class EntityRepositoryHelper {
         log.info("Active user is: {}", email);
         return email;
     }
-
+    /**
+     * Get active user
+     */
     public User getActiveUser() {
         return getUser(getCurrentEmail());
+    }
+
+    /**
+     * Get user by username
+     */
+    public User getUser(String userName) {
+        return userRepository.findByAccountEmail(userName)
+                .orElseThrow(() -> new NotFoundException("User", userName));
     }
 
     public User getUser(UUID userNumber) {
         return userRepository.findByUserNumber(userNumber)
                 .orElseThrow(() -> new NotFoundException("User", userNumber.toString()));
-    }
-
-    public User getUser(String userName) {
-        return userRepository.findByAccountEmail(userName)
-                .orElseThrow(() -> new NotFoundException("User", userName));
     }
 
     public Authority getAuthority(){

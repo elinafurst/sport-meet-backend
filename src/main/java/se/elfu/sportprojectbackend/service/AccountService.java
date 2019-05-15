@@ -128,8 +128,6 @@ public class AccountService implements UserDetailsService {
         PasswordResetToken passwordResetToken = validatePasswordToken(token);
 
         accountRepository.save(AccountConverter.updateFrom(passwordResetToken, bCryptPasswordEncoder.encode(password)));
-
-        passwordResetTokenRepository.delete(passwordResetToken);
     }
 
     @Transactional(rollbackFor = Exception.class)

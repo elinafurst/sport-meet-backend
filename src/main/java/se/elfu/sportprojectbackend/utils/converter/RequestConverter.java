@@ -22,12 +22,6 @@ public final class RequestConverter {
                 .build();
     }
 
-    public static List<RequestDto> createRequestDtoList(List<Request> requests, User user) {
-        return requests.stream()
-                .map(request -> RequestConverter.createRequestDto(request, user))
-                .collect(Collectors.toList());
-    }
-
     public static RequestDto createRequestDto(Request request, User user) {
         return RequestDto.builder()
                 .requestNumber(request.getRequestNumber())

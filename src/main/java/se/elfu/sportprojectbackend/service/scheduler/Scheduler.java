@@ -22,7 +22,7 @@ public class Scheduler {
     /**
      * Background job that runs every x minutes, calls method that inactive events that are about to "expire"
      */
-    @Scheduled(fixedRate = 60000)//300000)
+    @Scheduled(fixedRate = 60000)
     public void updateExpiredEvents() {
         log.info("Update passed events {}", LocalDateTime.now());
         long updatedEvents = eventService.checkIfEventIsAboutToExpire();

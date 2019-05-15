@@ -46,8 +46,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .authorities("ROLE_USER", "ROLE_ADMIN")
                 .authorizedGrantTypes(GRANT_TYPE_PASSWORD )
                 .scopes(SCOPE_READ, SCOPE_WRITE, TRUST)
-                .accessTokenValiditySeconds(ACCESS_TOKEN_VALIDITY_SECONDS)
-                .refreshTokenValiditySeconds(REFRESH_TOKEN_VALIDITY_SECONDS);
+                .accessTokenValiditySeconds(ACCESS_TOKEN_VALIDITY_SECONDS);
+               // .refreshTokenValiditySeconds(REFRESH_TOKEN_VALIDITY_SECONDS);
     }
 
     @Override

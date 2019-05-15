@@ -47,25 +47,28 @@ public final class EventConverter {
                 .build();
     }
 
-    public static EventDto createEventDto(Event entity, RequestStatus requestStatus, User user) {
+    /**
+     * Example of converting to eventDto for detailed view
+     */
+    public static EventDto createEventDto(Event event, RequestStatus requestStatus, User user) {
         return EventDto.builder()
-                .eventNumber(entity.getEventNumber())
-                .name(entity.getName())
-                .description(entity.getDescription())
-                .sport(entity.getSport().getName())
-                .eventStartDate(DateTimeParser.formatDate(entity.getEventStart()))
-                .eventStartTime(DateTimeParser.formatTime(entity.getEventStart()))
-                .eventStartDateTime(DateTimeParser.formatDateTimeSwedish(entity.getEventStart()))
-                .noOfParticipants(entity.getParticipants().size())
-                .participants(KeyValueMapper.mapUsers(entity.getParticipants()))
-                .createdBy(KeyValueMapper.mapUser(entity.getCreatedBy()))
-                .byUnit(KeyValueMapper.mapUnit(entity.getByUnit()))
-                .active(entity.isActive())
-                .city(entity.getLocation().getCity())
-                .area(entity.getLocation().getArea().getArea())
-                .meetingPoint(entity.getMeetingPoint())
+                .eventNumber(event.getEventNumber())
+                .name(event.getName())
+                .description(event.getDescription())
+                .sport(event.getSport().getName())
+                .eventStartDate(DateTimeParser.formatDate(event.getEventStart()))
+                .eventStartTime(DateTimeParser.formatTime(event.getEventStart()))
+                .eventStartDateTime(DateTimeParser.formatDateTimeSwedish(event.getEventStart()))
+                .noOfParticipants(event.getParticipants().size())
+                .participants(KeyValueMapper.mapUsers(event.getParticipants()))
+                .createdBy(KeyValueMapper.mapUser(event.getCreatedBy()))
+                .byUnit(KeyValueMapper.mapUnit(event.getByUnit()))
+                .active(event.isActive())
+                .city(event.getLocation().getCity())
+                .area(event.getLocation().getArea().getArea())
+                .meetingPoint(event.getMeetingPoint())
                 .requestStatus(requestStatus)
-                .isCreator(Validator.isSameUser(entity.getCreatedBy().getId(), user.getId()))
+                .isCreator(Validator.isSameUser(event.getCreatedBy().getId(), user.getId()))
                 .build();
     }
 
@@ -90,7 +93,7 @@ public final class EventConverter {
      * Converts to PageDto. To get total hits of query and pages available and a list of objects from current page.
      */
     public static PageDto convertToPageDto(Page<Event> entities){
-        Validator.isEmpty(entities.getSize());
+        Validator.isEmpty(entities.getSize()); // throws exception, one way to show webb request has no results could also use totalelements = 0
 
         return PageDto.builder()
                 .totalElements(entities.getTotalElements())

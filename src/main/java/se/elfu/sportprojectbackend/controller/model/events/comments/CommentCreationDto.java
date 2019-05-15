@@ -11,6 +11,6 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class CommentCreationDto {
 
-    @NotBlank(message = "Kommentarsfältet kan inte va tomt")
+    @NotBlank(message = "Comment cant be empty")
     private String comment;
 }

@@ -72,6 +72,7 @@ public class EventService {
         LocalDateTime eventStart = DateTimeParser.parseDateTime(eventCreationDto.getEventStartDate(), eventCreationDto.getEventStartTime());
         Location location = entityRepositoryHelper.getLocation(eventCreationDto.getCity(), eventCreationDto.getArea());
 
+        Validator.isCreator(event, user);
         boolean active = Validator.isActiveInFuture(eventStart);
         Unit unit = validator.isEventRelatedToUnit(eventCreationDto);
 

@@ -43,8 +43,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/account/signup", "/oauth/token", "account/password/reset","/account/password/save**" ,"account/password/update*", "oauth/authorization", "/swagger-ui.html" ).permitAll() // Open
-                .antMatchers( HttpMethod.GET,"/open/events/**").permitAll() // open
+                .antMatchers("/account/signup", "/oauth/token",
+                        "account/password/reset","/account/password/save**" ,"account/password/update*",
+                        "oauth/authorization", "/swagger-ui.html" ).permitAll() // no authentication
+                .antMatchers( HttpMethod.GET,"/open/events/**").permitAll() // no authentication
                 .anyRequest().authenticated() // All other request needs authentication
                 .and()
                 .formLogin();

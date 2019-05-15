@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class UnitCreationDto {
 
-    @NotBlank(message = "Namn saknas")
+    @NotBlank(message = "Name missing")
     private String name;
     private String description;
 }

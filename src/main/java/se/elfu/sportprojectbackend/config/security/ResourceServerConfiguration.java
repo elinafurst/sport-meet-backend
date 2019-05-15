@@ -26,10 +26,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .anonymous().disable() // No anonymoususer
                 .authorizeRequests()
                 .antMatchers("/admin/**").access("hasRole('ADMIN')") // Have to admin to use these endpoints
-                .antMatchers("/units", "/units/**").access("hasRole('USER')")
-                .antMatchers("/users", "/units/**").access("hasRole('USER')")
-                .antMatchers("/requests", "/requests/**").access("hasRole('USER')")
-                .antMatchers("/events", "events/**").access("hasRole('USER')")
+                .antMatchers("/units", "/units/**").access("hasAnyRole('ADMIN', 'USER')") // can be user or admin
+                .antMatchers("/users", "/units/**").access("hasAnyRole('ADMIN', 'USER')")
+                .antMatchers("/requests", "/requests/**").access("hasAnyRole('ADMIN', 'USER')")
+                .antMatchers("/events", "events/**").access("hasAnyRole('ADMIN', 'USER')")
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
     }
 

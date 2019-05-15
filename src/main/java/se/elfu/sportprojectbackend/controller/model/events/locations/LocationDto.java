@@ -14,7 +14,7 @@ import java.util.Set;
 @Builder
 public class LocationDto {
 
-    @NotBlank(message = "Stad saknas")
+    @NotBlank(message = "City missing")
     private String city;
-    private Set<@NotBlank(message = "Områden saknas") String> areas;
+    private Set<@NotBlank(message = "Area missing") String> areas;
 }

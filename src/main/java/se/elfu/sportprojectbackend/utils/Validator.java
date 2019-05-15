@@ -40,7 +40,7 @@ public final class Validator {
 
     public static void isCreator(Event event, User user) {
         if(!event.getCreatedBy().getId().equals(user.getId())){
-            throw new BadRequestException("Can't cancel other users event");
+            throw new BadRequestException("Not creator of event");
         }
     }
 
